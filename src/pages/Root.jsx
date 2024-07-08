@@ -6,9 +6,9 @@ export function Root() {
 
     useEffect(() => {
         fetch('http://localhost:8080/api/')
-        .then(response => response.json())
-        .then(data => setUsers(data))
-        .catch(error => console.error('Error fetching users:', error));
+            .then(response => response.json())
+            .then(data => setUser(data))
+            .catch(error => console.error('Error fetching users:', error));
     }, []);
 
     return (
