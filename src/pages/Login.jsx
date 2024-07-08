@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
-export function RegisterForm() {
+export function Login() {
     const [user, setUser] = useState({username: '', password: ''});
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        fetch('https://localhost:8080/register', {
+        fetch('https://localhost:8080/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -24,7 +25,7 @@ export function RegisterForm() {
 
     return (
         <div>
-            <h1>Register</h1>
+            <h1>Login</h1>
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
@@ -45,7 +46,7 @@ export function RegisterForm() {
                 <button type="submit">Submit</button>
             </form>
             <br></br>
-            <a href="/login">Login</a>
+            <Link to="/register">Register</Link>
         </div>
     )
 }
