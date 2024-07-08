@@ -9,10 +9,9 @@ export default function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route index element={<Login />} />
-          <Route path="/login" element={<Login/>} />
-          <Route path="/register" element={<Register/>} />
-          <Route path="/index" element={<Root/>} />
+          <Route index element={<Root />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
     </div>
