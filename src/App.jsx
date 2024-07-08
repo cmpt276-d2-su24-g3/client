@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { Root } from "./pages/Root";
