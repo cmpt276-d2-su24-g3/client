@@ -46,7 +46,7 @@ export function Login() {
                 <button type="submit">Submit</button>
             </form>
             <br></br>
-            <Link to="/Register">Register</Link>
+            <Link to="/register">Register</Link>
         </div>
     )
 }

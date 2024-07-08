@@ -46,7 +46,7 @@ export function Register() {
                 <button type="submit">Submit</button>
             </form>
             <br></br>
-            <Link to="/Login">Login</Link>
+            <Link to="/login">Login</Link>
         </div>
     )
 }

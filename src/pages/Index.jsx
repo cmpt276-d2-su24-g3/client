@@ -15,9 +15,9 @@ export function Index() {
         <div>
             <h1>Portal</h1>
             <h2>Welcome {user.username}</h2>
-            <Link to="/Latency">Latency</Link>
+            <Link to="/latency">Latency</Link>
             <br></br>
-            <Link to="/Logout">Logout</Link>
+            <Link to="/logout">Logout</Link>
         </div>
     )
 }
