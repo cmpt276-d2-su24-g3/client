@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
-import { Index } from "./pages/Index";
+import { Root } from "./pages/Root";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 export default function App() {
@@ -12,7 +12,7 @@ export default function App() {
           <Route index element={<Login />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/register" element={<Register/>} />
-          <Route path="/index" element={<Index/>} />
+          <Route path="/index" element={<Root/>} />
         </Routes>
       </BrowserRouter>
     </div>
