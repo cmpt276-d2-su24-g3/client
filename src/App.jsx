@@ -1,7 +1,7 @@
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import { Root } from "./pages/Root";
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Login } from './pages/Login'
+import { Register } from './pages/Register'
+import { Root } from './pages/Root'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 export default function App() {
   return (
