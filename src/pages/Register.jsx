@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
-export function RegisterForm() {
+export function Register() {
     const [user, setUser] = useState({username: '', password: ''});
 
     const handleSubmit = (event) => {
@@ -45,7 +46,7 @@ export function RegisterForm() {
                 <button type="submit">Submit</button>
             </form>
             <br></br>
-            <a href="/login">Login</a>
+            <Link to="/Login">Login</Link>
         </div>
     )
 }
