@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Check, ChevronsUpDown } from 'lucide-react'
 
@@ -17,13 +17,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 
-export function RegionCombobox({ regions, disabled }) {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState('')
+export function RegionCombobox({ regions, setRegion, disabled, hidden }) {
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState('')
+
+  useEffect(() => {
+    setRegion(regions.find((region) => region.value === value)?.code ?? null)
+  }, [regions, setRegion, value])
 
   regions = regions.map((region) => ({
     value: (region.name + ' ' + region.code).toLowerCase(),
     label: region.name,
+    code: region.code,
   }))
 
   return (
@@ -33,7 +38,7 @@ export function RegionCombobox({ regions, disabled }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className={'w-[200px] justify-between' + (hidden ? ' hidden' : '')}
           disabled={disabled}
         >
           {value
@@ -73,5 +78,7 @@ export function RegionCombobox({ regions, disabled }) {
 }
 RegionCombobox.propTypes = {
   regions: PropTypes.array.isRequired,
+  setRegion: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  hidden: PropTypes.bool,
 }

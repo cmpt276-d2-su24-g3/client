@@ -5,7 +5,9 @@ import mapboxgl from 'mapbox-gl'
 mapboxgl.accessToken =
   'pk.eyJ1IjoiYmhhdmppdGNoYXVoYW4iLCJhIjoiY2x5MG95ejEzMGhuMDJtb2tvb3RpZHMyMiJ9.fJafGFJkITooEewonltjGw'
 
-export function Map({ regions }) {
+const DEFAULT_ZOOM = 3
+
+export function Map({ regions, location }) {
   const mapContainer = useRef(null)
   const map = useRef(null)
   const [geolocated, setGeolocated] = useState(false)
@@ -14,7 +16,6 @@ export function Map({ regions }) {
   const [addedLines, setAddedLines] = useState(false)
   const [longitude, setLongitude] = useState(0)
   const [latitude, setLatitude] = useState(90)
-  const [zoom, setZoom] = useState(3)
 
   const geolocate = useMemo(
     () =>
@@ -41,7 +42,7 @@ export function Map({ regions }) {
       container: mapContainer.current,
       style: 'mapbox://styles/bhavjitchauhan/cly0qsii4005201oecij7b5na',
       center: [longitude, latitude],
-      zoom: zoom,
+      zoom: DEFAULT_ZOOM,
     })
     map.current.addControl(geolocate, 'bottom-left')
     map.current.on('load', () => {
@@ -70,10 +71,22 @@ export function Map({ regions }) {
     setAddedLines(true)
   }, [addedLines, geolocated, regions, longitude, latitude])
 
+  useEffect(() => {
+    if (!addedMap) return
+
+    if (location)
+      map.current.flyTo({
+        center: [location.longitude, location.latitude],
+        zoom: DEFAULT_ZOOM,
+      })
+    else geolocate.trigger()
+  }, [addedMap, location, geolocate])
+
   return <div ref={mapContainer} className="h-full map-container" />
 }
 Map.propTypes = {
   regions: PropTypes.array.isRequired,
+  location: PropTypes.object,
 }
 
 function addRegionMarkers(regions, map) {

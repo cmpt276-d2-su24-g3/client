@@ -9,6 +9,7 @@ const PopoverTrigger = PopoverPrimitive.Trigger
 
 // eslint-disable-next-line react/prop-types
 const PopoverContent = React.forwardRef(
+  // eslint-disable-next-line react/prop-types
   ({ className, align = 'center', sideOffset = 4, ...props }, ref) => (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content

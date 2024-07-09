@@ -6,6 +6,7 @@ export function Latency() {
   const [regions, setRegions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [location, setLocation] = useState(null)
 
   useEffect(() => {
     ;(async () => {
@@ -32,11 +33,11 @@ export function Latency() {
           Get live latencies to AWS data centers worldwide.
         </h2>
         <div className="h-full">
-          <Map regions={regions} />
+          <Map regions={regions} location={location} />
         </div>
       </div>
       <div className="flex flex-col gap-2 basis-2/5">
-        <LocationInput regions={regions} />
+        <LocationInput regions={regions} setLocation={setLocation} />
         <div className="container flex items-center justify-center font-bold uppercase shadow-md grow text-slate-400">
           Region select
         </div>
@@ -47,3 +48,9 @@ export function Latency() {
     </div>
   )
 }
+
+/**
+ * @typedef {Object} location
+ * @property {string} latitude
+ * @property {string} longitude
+ */
