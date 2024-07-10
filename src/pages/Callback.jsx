@@ -31,7 +31,7 @@ export function Callback() {
                 navigate('/')
             }).catch(error => {
                 console.error("Token exchange error", error);
-                history.push('/login?error=true');
+                navigate('/login?error=true');
             });
         }
     }, [navigate]);
