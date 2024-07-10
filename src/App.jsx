@@ -3,7 +3,6 @@ import { Login } from './pages/Login'
 import { Logout } from './pages/Logout'
 import { Register } from './pages/Register'
 import { Latency } from './pages/Latency'
-import { Callback } from './pages/Callback'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Admin } from './pages/Admin'
 
