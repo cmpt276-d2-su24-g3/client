@@ -5,7 +5,7 @@ import { LocationInput } from './LocationInput'
 export function Latency() {
   const [regions, setRegions] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null
+  const [error, setError] = useState(null)
   const [location, setLocation] = useState(null)
 
   useEffect(() => {
