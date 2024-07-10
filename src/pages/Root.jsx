@@ -17,6 +17,8 @@ export function Root() {
       <h2>Welcome {user.username}</h2>
       <Link to="/latency">Latency</Link>
       <br></br>
+      <Link to="/login">Login</Link>
+      <br></br>
       <Link to="/logout">Logout</Link>
     </div>
   )

@@ -1,54 +1,16 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import axios from 'axios';
 
 export function Login() {
-  const [user, setUser] = useState({ username: '', password: '' })
+  
+  const login = () => {
+      const loginUrl = `https://yyc-portal.auth.us-west-2.amazoncognito.com/login?client_id=481g1a0ridauh779f34tvsti05&response_type=code&scope=email+openid&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcallback`;
+      window.location.href = loginUrl;
+    };
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    fetch('https://localhost:8080/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log('User created:', data))
-      .catch((error) => console.error('Error creating user:', error))
-  }
-
-  const handleChange = (event) => {
-    const { name, value } = event.target
-    setUser((prevUser) => ({ ...prevUser, [name]: value }))
-  }
-
-  return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          value={user.username}
-          placeholder="Username"
-          onChange={handleChange}
-        />
-        <br></br>
-        <br></br>
-        <input
-          type="text"
-          name="password"
-          value={user.password}
-          placeholder="Password"
-          onChange={handleChange}
-        />
-        <br></br>
-        <br></br>
-        <button type="submit">Submit</button>
-      </form>
-      <br></br>
-      <Link to="/register">Register</Link>
-    </div>
-  )
-}
+    return (
+        <div>
+            <button onClick={login}>Login with Cognito</button>
+        </div>
+    );
+};
