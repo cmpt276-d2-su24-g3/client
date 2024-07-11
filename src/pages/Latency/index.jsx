@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Map } from './Map'
+import { RegionInput } from './RegionInput'
 
 export function Latency() {
   const [regions, setRegions] = useState([])
@@ -38,9 +39,7 @@ export function Latency() {
         <div className="container flex items-center justify-center font-bold uppercase shadow-md grow text-slate-400">
           Location select
         </div>
-        <div className="container flex items-center justify-center font-bold uppercase shadow-md grow text-slate-400">
-          Region select
-        </div>
+        <RegionInput regions={regions} />
         <div className="container flex items-center justify-center font-bold uppercase shadow-md grow text-slate-400">
           Table
         </div>
