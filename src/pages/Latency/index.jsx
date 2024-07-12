@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Map } from './Map'
-import { RegionInput } from './RegionInput'
+import { LocationInput } from './LocationInput'
+import { RegionsInput } from './RegionsInput'
+
+// TODO: Generate based on user location?
+const DEFAULT_REGION_AREAS = ['Canada', 'US West', 'US East']
 
 export function Latency() {
   const [regions, setRegions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [location, setLocation] = useState(null)
 
   useEffect(() => {
     ;(async () => {
@@ -14,7 +19,10 @@ export function Latency() {
           import.meta.env.VITE_API_URL + '/data/regions.json',
         )
         if (!res.ok) throw new Error('Failed to fetch regions')
-        const regions = await res.json()
+        const regions = (await res.json()).map((region) => ({
+          ...region,
+          selected: DEFAULT_REGION_AREAS.includes(region.area),
+        }))
         setRegions(regions)
       } catch (error) {
         setError(error)
@@ -32,14 +40,12 @@ export function Latency() {
           Get live latencies to AWS data centers worldwide.
         </h2>
         <div className="h-full">
-          <Map regions={regions} />
+          <Map regions={regions} location={location} />
         </div>
       </div>
       <div className="flex flex-col gap-2 basis-2/5">
-        <div className="container flex items-center justify-center font-bold uppercase shadow-md grow text-slate-400">
-          Location select
-        </div>
-        <RegionInput regions={regions} />
+        <LocationInput regions={regions} setLocation={setLocation} />
+        <RegionsInput regions={regions} setRegions={setRegions} />
         <div className="container flex items-center justify-center font-bold uppercase shadow-md grow text-slate-400">
           Table
         </div>
@@ -47,3 +53,9 @@ export function Latency() {
     </div>
   )
 }
+
+/**
+ * @typedef {Object} location
+ * @property {string} latitude
+ * @property {string} longitude
+ */
