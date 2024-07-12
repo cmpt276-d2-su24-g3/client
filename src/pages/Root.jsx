@@ -20,6 +20,8 @@ export function Root() {
       <Link to="/login">Login</Link>
       <br></br>
       <Link to="/logout">Logout</Link>
+      <br></br>
+      <Link to="/admin">Admin</Link>
     </div>
   )
 }
