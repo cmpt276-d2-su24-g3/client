@@ -17,18 +17,16 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Check } from 'lucide-react'
   
 export function RegionInput(regions) {
     const [area_selected, setAreaSelected] = useState("Select an area")
-    const [area, setArea] = useState([])
+    const [regions_in_area, setRegionsInArea] = useState([])
+    const [regions_checked, setRegionsChecked] = useState({})
 
-    function handleSetArea(area_regions, area_name) {
+    function handleSetArea(_regions_in_area, area_name) {
         setAreaSelected(area_name)
-        setArea(area_regions.map(region =>
-            <div key={region.code} style={{ whiteSpace: "nowrap", fontSize: "0.9rem", opacity: "0.6" }}>
-                <Checkbox/> {region.name} 100ms
-            </div>))
+        setRegionsInArea(_regions_in_area)
+        setRegionsChecked({})
     }
 
     return (
@@ -72,7 +70,18 @@ export function RegionInput(regions) {
             </CardHeader>
             <CardContent>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px"}}>
-                    {area}
+                    {regions_in_area.map(region => (
+                        <div key={region.code} style={{ whiteSpace: "nowrap", fontSize: "0.9rem", opacity: "0.6" }}>
+                            <Checkbox
+                                checked={regions_checked[region.code]}
+                                onClick={() => setRegionsChecked(current_checked_regions => ({
+                                    ...current_checked_regions,
+                                    [region.code]: !current_checked_regions[region.code]
+                                }))}
+                            />&nbsp;{region.name} 100ms
+                            {/* {regions_checked[region.code] && <div>Isoline</div>} */}
+                        </div>
+                    ))}
                 </div>
             </CardContent>
         </Card>
