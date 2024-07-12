@@ -10,6 +10,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/components/ui/command'
 import {
   Popover,
@@ -26,10 +27,15 @@ export function RegionCombobox({ regions, setRegion, disabled, hidden }) {
   }, [regions, setRegion, value])
 
   regions = regions.map((region) => ({
-    value: (region.name + ' ' + region.code).toLowerCase(),
+    value: (region.name + ' ' + region.code + ' ' + region.area).toLowerCase(),
     label: region.name,
     code: region.code,
+    area: region.area,
   }))
+
+  const groupedRegions = Object.entries(
+    Object.groupBy(regions, (region) => region.area),
+  )
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -50,27 +56,31 @@ export function RegionCombobox({ regions, setRegion, disabled, hidden }) {
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Search region..." />
-          <CommandEmpty>No region found.</CommandEmpty>
-          <CommandGroup>
-            {regions.map((region) => (
-              <CommandItem
-                key={region.value}
-                value={region.value}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? '' : currentValue)
-                  setOpen(false)
-                }}
-              >
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    value === region.value ? 'opacity-100' : 'opacity-0',
-                  )}
-                />
-                {region.label ?? 'test'}
-              </CommandItem>
+          <CommandList>
+            <CommandEmpty>No region found.</CommandEmpty>
+            {groupedRegions.map(([area, regions]) => (
+              <CommandGroup key={area} heading={area.toUpperCase()}>
+                {regions.map((region) => (
+                  <CommandItem
+                    key={region.value}
+                    value={region.value}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === value ? '' : currentValue)
+                      setOpen(false)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-4 w-4',
+                        value === region.value ? 'opacity-100' : 'opacity-0',
+                      )}
+                    />
+                    {region.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
             ))}
-          </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
