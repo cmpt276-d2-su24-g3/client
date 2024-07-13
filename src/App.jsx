@@ -1,5 +1,6 @@
 import { Root } from './pages/Root'
 import { Login } from './pages/Login'
+import { Logout } from './pages/Logout'
 import { Register } from './pages/Register'
 import { Latency } from './pages/Latency'
 import { Callback } from './pages/Callback'
@@ -15,7 +16,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/latency" element={<Latency />} />
-          <Route path="/callback" element={<Callback />} />
+          <Route path="/logout" element={<Logout />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </BrowserRouter>

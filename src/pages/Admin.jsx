@@ -19,6 +19,7 @@ export function Admin() {
 function isAdmin() {
     const token = localStorage.getItem('id_token');
     console.log(jwtDecode(token));
-    const idToken = JSON.parse(jwtDecode(token));
-    return idToken["cognito:groups"] && idToken["cognito:groups"].includes("admin");
+    const decoded = jwtDecode(token);
+    console.log(decoded['cognito:groups'] && Array.isArray(decoded['cognito:groups']) && decoded['cognito:groups'].includes('admin'));
+    return (decoded['cognito:groups'] && Array.isArray(decoded['cognito:groups']) && decoded['cognito:groups'].includes('admin'));
 }
