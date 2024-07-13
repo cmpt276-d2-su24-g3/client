@@ -10,6 +10,7 @@ const DEFAULT_ZOOM = 3
 export function Map({ regions, location }) {
   const mapContainer = useRef(null)
   const map = useRef(null)
+  const markers = useRef([])
   const [geolocated, setGeolocated] = useState(false)
   const [addedMap, setAddedMap] = useState(false)
   const [addedMarkers, setAddedMarkers] = useState(false)
@@ -58,7 +59,7 @@ export function Map({ regions, location }) {
     if (addedMarkers) return
     if (!regions.length) return
 
-    addRegionMarkers(regions, map.current)
+    markers.current = addRegionMarkers(regions, map.current)
     setAddedMarkers(true)
   }, [addedMarkers, regions])
 
@@ -82,6 +83,31 @@ export function Map({ regions, location }) {
     else geolocate.trigger()
   }, [addedMap, location, geolocate])
 
+  useEffect(() => {
+    if (!addedMap) return
+    if (!addedMarkers) return
+    if (!addedLines) return
+
+    markers.current.forEach((marker, i) => {
+      const region = regions[i]
+      const color = region.selected ? '#9747ff' : '#eee'
+      // TODO: Extract this to a mapbox.js utils file
+      marker
+        .getElement()
+        .querySelectorAll('svg path[fill="' + marker._color + '"]')[0]
+        ?.setAttribute('fill', color)
+      marker._color = color
+    })
+
+    for (const region of regions) {
+      map.current.setLayoutProperty(
+        region.code,
+        'visibility',
+        region.selected ? 'visible' : 'none',
+      )
+    }
+  }, [regions])
+
   return <div ref={mapContainer} className="h-full map-container" />
 }
 Map.propTypes = {
@@ -91,10 +117,10 @@ Map.propTypes = {
 
 function addRegionMarkers(regions, map) {
   return regions.map((region) => {
-    const { name, longitude, latitude } = region
+    const { name, selected, longitude, latitude } = region
 
     return new mapboxgl.Marker({
-      color: '#9747ff',
+      color: selected ? '#9747ff' : '#eee',
     })
       .setLngLat([longitude, latitude])
       .setPopup(new mapboxgl.Popup().setHTML(name))
@@ -120,6 +146,7 @@ function createRegionLinesData(regions, center) {
       },
       properties: {
         region: region.code,
+        selected: region.selected,
       },
     }
   })
@@ -139,6 +166,9 @@ function addRegionLines(regions, center, map) {
         'line-color': '#888',
         'line-width': 0.5,
         'line-dasharray': [4, 4],
+      },
+      layout: {
+        visibility: lineData.properties.selected ? 'visible' : 'none',
       },
     })
   }
