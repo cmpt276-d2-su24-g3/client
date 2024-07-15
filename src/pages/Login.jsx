@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
 export function Login() {
@@ -24,10 +25,9 @@ export function Login() {
                 }
             }).then(response => {
                 const { access_token, id_token, refresh_token } = response.data;
-                // Store tokens in local storage or context
-                localStorage.setItem('access_token', access_token);
-                localStorage.setItem('id_token', id_token);
-                localStorage.setItem('refresh_token', refresh_token);
+                Cookies.set('access_token', access_token, { expires: 7, secure: true });
+                Cookies.set('id_token', id_token, { expires: 7, secure: true });
+                Cookies.set('refresh_token', refresh_token, { expires: 7, secure: true });
                 navigate('/')
             }).catch(error => {
                 console.error("Token exchange error", error);
