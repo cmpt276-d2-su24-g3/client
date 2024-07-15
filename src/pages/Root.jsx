@@ -25,7 +25,3 @@ export function Root() {
     </div>
   )
 }
-
-function isAuthenticated() {
-
-}
