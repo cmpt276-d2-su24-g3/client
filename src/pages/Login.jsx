@@ -25,6 +25,7 @@ export function Login() {
                 }
             }).then(response => {
                 const { access_token, id_token, refresh_token } = response.data;
+                console.log(response.data);
                 Cookies.set('access_token', access_token, { expires: 7, secure: true });
                 Cookies.set('id_token', id_token, { expires: 7, secure: true });
                 Cookies.set('refresh_token', refresh_token, { expires: 7, secure: true });
