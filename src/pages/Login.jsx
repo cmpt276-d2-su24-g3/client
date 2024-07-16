@@ -1,54 +1,42 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 export function Login() {
-  const [user, setUser] = useState({ username: '', password: '' })
+    const navigate = useNavigate()
+    
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    fetch('https://localhost:8080/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log('User created:', data))
-      .catch((error) => console.error('Error creating user:', error))
-  }
+        if (code) {
+            const tokenUrl = `https://yyc-portal.auth.us-west-2.amazoncognito.com/oauth2/token`;
+            const data = {
+                grant_type: 'authorization_code',
+                client_id: '481g1a0ridauh779f34tvsti05',
+                redirect_uri: 'http://localhost:5173/login',
+                code: code
+            };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target
-    setUser((prevUser) => ({ ...prevUser, [name]: value }))
-  }
+            axios.post(tokenUrl, data, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).then(response => {
+                const { access_token, id_token, refresh_token } = response.data;
+                console.log(response.data);
+                Cookies.set('access_token', access_token, { expires: 7, secure: true });
+                Cookies.set('id_token', id_token, { expires: 7, secure: true });
+                Cookies.set('refresh_token', refresh_token, { expires: 7, secure: true });
+                navigate('/')
+            }).catch(error => {
+                console.error("Token exchange error", error);
+                navigate('/login?error=true');
+            });
+        }
+    }, [navigate]);
 
-  return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          value={user.username}
-          placeholder="Username"
-          onChange={handleChange}
-        />
-        <br></br>
-        <br></br>
-        <input
-          type="text"
-          name="password"
-          value={user.password}
-          placeholder="Password"
-          onChange={handleChange}
-        />
-        <br></br>
-        <br></br>
-        <button type="submit">Submit</button>
-      </form>
-      <br></br>
-      <Link to="/register">Register</Link>
-    </div>
-  )
-}
+    return <div>Loading...</div>;
+};
+
