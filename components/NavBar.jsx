@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 
 import AWS_Logo from "@/AWS_Logo.png"
+import { ProfileLogin } from './ui/ProfileLogin'
 
 export function NavBar(page) {
     return (
@@ -26,7 +27,8 @@ export function NavBar(page) {
                     {page == "Latency History" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
             </div>
-            <span className="mx-5 text-white">Name</span>
+
+            <ProfileLogin />
         </div>
     )
 }
