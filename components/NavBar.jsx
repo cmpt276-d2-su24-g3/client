@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import AWS_Logo from "@/AWS_Logo.png"
 import { ProfileLogin } from './ui/ProfileLogin'
 
-export function NavBar(page) {
+export function NavBar({ page }) {
     return (
         <div className="flex justify-between py-3 bg-sky-950">
             <div className="flex text-sm text-white">
@@ -16,7 +16,7 @@ export function NavBar(page) {
                 
                 <Link className="mx-5" to="/latency">
                     Dashboard
-                    {true && <div className="py-1 bg-orange-500"></div>}
+                    {page == "Dashboard" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
                 <Link className="mx-5" to="/latency">
                     Service Availability
@@ -25,6 +25,10 @@ export function NavBar(page) {
                 <Link className="mx-5" to="/latency">
                     Latency History
                     {page == "Latency History" && <div className="py-1 bg-orange-500"></div>}
+                </Link>
+                <Link className="mx-5" to="/chatbox">
+                    Chatbox
+                    {page == "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
             </div>
 
