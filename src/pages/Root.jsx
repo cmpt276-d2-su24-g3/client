@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { NavBar } from '@/components/NavBar'
 
 export function Root() {
   /*const [user, setUser] = useState([])
@@ -13,6 +14,7 @@ export function Root() {
 
   return (
     <div>
+      <NavBar />
       <h1>Portal</h1>
       <h2>Welcome</h2>
       <Link to="/latency">Latency</Link>
