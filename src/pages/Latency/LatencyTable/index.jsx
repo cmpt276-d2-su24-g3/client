@@ -4,20 +4,28 @@ import { columns } from './columns'
 import { DataTable } from './data-table'
 import { useEffect } from 'react'
 
-export default function LatencyTable({ regions }) {
+export default function LatencyTable({ regions, latencies }) {
   const [data, setData] = useState([])
   useEffect(() => {
-    console.log('regions', regions)
+    if (regions.length === 0 || latencies.length === 0) return
+
     setData(
-      regions?.map((region) => ({
-        regionName: region.name,
-        latency: region.latency ?? Math.random() * 100,
-      })),
+      latencies
+        .filter(
+          (latency) =>
+            regions.find((region) => region.code === latency.region)?.selected,
+        )
+        .map((latency) => ({
+          regionName: regions.find((region) => region.code === latency.region)
+            ?.name,
+          latency: latency.latency,
+        })),
     )
-  }, [regions])
+  }, [regions, latencies])
 
   return <DataTable columns={columns} data={data} />
 }
 LatencyTable.propTypes = {
   regions: PropTypes.array.isRequired,
+  latencies: PropTypes.array.isRequired,
 }

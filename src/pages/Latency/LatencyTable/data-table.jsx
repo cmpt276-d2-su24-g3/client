@@ -16,7 +16,12 @@ import {
 } from '@/components/ui/table'
 
 export function DataTable({ columns, data }) {
-  const [sorting, setSorting] = useState([])
+  const [sorting, setSorting] = useState([
+    {
+      id: 'latency',
+      desc: false,
+    },
+  ])
 
   const table = useReactTable({
     data,

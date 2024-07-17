@@ -67,7 +67,7 @@ export function Latency() {
       <div className="flex flex-col gap-2 basis-2/5">
         <LocationInput regions={regions} setLocation={setLocation} />
         <RegionsInput regions={regions} setRegions={setRegions} />
-        <LatencyTable regions={regions} />
+        <LatencyTable regions={regions} latencies={latencies} />
       </div>
     </div>
   )

@@ -21,8 +21,13 @@ export const columns = [
       )
     },
     cell: ({ row }) => {
+      const latency = row.getValue('latency')
+
+      if (!isFinite(latency))
+        return <div className="font-medium text-right">-</div>
+
       const formatted =
-        row.getValue('latency').toLocaleString(undefined, {
+        latency.toLocaleString(undefined, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         }) + ' ms'
