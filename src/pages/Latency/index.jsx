@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Map } from './Map'
 import { LocationInput } from './LocationInput'
 import { RegionsInput } from './RegionsInput'
+import LatencyTable from './LatencyTable'
 
 // TODO: Generate based on user location?
 const DEFAULT_REGION_AREAS = ['Canada', 'US West', 'US East']
@@ -46,9 +47,7 @@ export function Latency() {
       <div className="flex flex-col gap-2 basis-2/5">
         <LocationInput regions={regions} setLocation={setLocation} />
         <RegionsInput regions={regions} setRegions={setRegions} />
-        <div className="container flex items-center justify-center font-bold uppercase shadow-md grow text-slate-400">
-          Table
-        </div>
+        <LatencyTable regions={regions} />
       </div>
     </div>
   )
