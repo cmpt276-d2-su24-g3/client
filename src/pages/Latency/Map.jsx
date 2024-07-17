@@ -1,13 +1,15 @@
 import { useRef, useEffect, useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import mapboxgl from 'mapbox-gl'
+import { clamp, range } from '@/lib/utils'
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoiYmhhdmppdGNoYXVoYW4iLCJhIjoiY2x5MG95ejEzMGhuMDJtb2tvb3RpZHMyMiJ9.fJafGFJkITooEewonltjGw'
 
 const DEFAULT_ZOOM = 3
+const LATENCY_THRESHOLD = 300
 
-export function Map({ regions, location }) {
+export function Map({ regions, latencies, location }) {
   const mapContainer = useRef(null)
   const map = useRef(null)
   const markers = useRef([])
@@ -108,10 +110,48 @@ export function Map({ regions, location }) {
     }
   }, [regions])
 
+  useEffect(() => {
+    if (!addedMap) return
+    if (!addedMarkers && !addedLines) return
+
+    for (const latency of latencies) {
+      if (latency.latency === Infinity) continue
+
+      const color = `hsl(${range(clamp(latency.latency, 0, LATENCY_THRESHOLD), 0, LATENCY_THRESHOLD, 120, 0)}, 100%, 50%)`
+      const width = range(
+        clamp(latency.latency, 0, LATENCY_THRESHOLD),
+        0,
+        LATENCY_THRESHOLD,
+        3,
+        0.5,
+      )
+
+      if (addedMarkers) {
+        const marker = markers.current.find((m) => m.region === latency.region)
+
+        if (marker) {
+          const name = regions.find((r) => r.code === latency.region).name
+          marker.setPopup(
+            new mapboxgl.Popup().setHTML(
+              `${name} <span class="text-gray-500">(${latency.latency.toFixed(2)}ms)</span>`,
+            ),
+          )
+        }
+      }
+
+      if (addedLines) {
+        map.current.setPaintProperty(latency.region, 'line-color', color)
+        map.current.setPaintProperty(latency.region, 'line-width', width)
+        map.current.setPaintProperty(latency.region, 'line-dasharray', [])
+      }
+    }
+  }, [latencies, addedMap, addedMarkers, addedLines])
+
   return <div ref={mapContainer} className="h-full map-container" />
 }
 Map.propTypes = {
   regions: PropTypes.array.isRequired,
+  latencies: PropTypes.array.isRequired,
   location: PropTypes.object,
 }
 
@@ -119,12 +159,16 @@ function addRegionMarkers(regions, map) {
   return regions.map((region) => {
     const { name, selected, longitude, latitude } = region
 
-    return new mapboxgl.Marker({
+    const marker = new mapboxgl.Marker({
       color: selected ? '#9747ff' : '#eee',
     })
       .setLngLat([longitude, latitude])
       .setPopup(new mapboxgl.Popup().setHTML(name))
       .addTo(map)
+
+    marker.region = region.code
+
+    return marker
   })
 }
 

@@ -40,7 +40,7 @@ export function Latency() {
     setLatencies(
       regions.map((region) => ({
         region: region.code,
-        latency: region.latency,
+        latency: Infinity,
       })),
     )
   }, [regions])
@@ -61,7 +61,7 @@ export function Latency() {
           Get live latencies to AWS data centers worldwide.
         </h2>
         <div className="h-full">
-          <Map regions={regions} location={location} />
+          <Map regions={regions} latencies={latencies} location={location} />
         </div>
       </div>
       <div className="flex flex-col gap-2 basis-2/5">

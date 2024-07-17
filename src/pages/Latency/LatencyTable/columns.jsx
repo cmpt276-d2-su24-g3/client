@@ -23,7 +23,7 @@ export const columns = [
     cell: ({ row }) => {
       const latency = row.getValue('latency')
 
-      if (!isFinite(latency))
+      if (latency === Infinity)
         return <div className="font-medium text-right">-</div>
 
       const formatted =
