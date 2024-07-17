@@ -77,12 +77,17 @@ export function Map({ regions, latencies, location }) {
   useEffect(() => {
     if (!addedMap) return
 
-    if (location.latitude && location.longitude)
+    if (location.latitude && location.longitude) {
       map.current.flyTo({
         center: [location.longitude, location.latitude],
         zoom: DEFAULT_ZOOM,
       })
+      setLongitude(location.longitude)
+      setLatitude(location.latitude)
+    }
     else geolocate.trigger()
+
+    resetRegionMarkerPopups(markers.current, regions)
   }, [addedMap, location, geolocate])
 
   useEffect(() => {
@@ -109,6 +114,11 @@ export function Map({ regions, latencies, location }) {
       )
     }
   }, [regions])
+
+  useEffect(() => {
+    clearRegionLines(regions, map.current)
+    addRegionLines(regions, { longitude, latitude }, map.current)
+  }, [longitude, latitude])
 
   useEffect(() => {
     if (!addedMap) return
@@ -172,6 +182,13 @@ function addRegionMarkers(regions, map) {
   })
 }
 
+function resetRegionMarkerPopups(markers, regions) {
+  markers.forEach((marker) => {
+    const name = regions.find((r) => r.code === marker.region).name
+    marker.setPopup(new mapboxgl.Popup().setHTML(name))
+  })
+}
+
 function createRegionLinesData(regions, center) {
   return regions.map((region) => {
     let centerLongitude = center.longitude
@@ -215,6 +232,16 @@ function addRegionLines(regions, center, map) {
         visibility: lineData.properties.selected ? 'visible' : 'none',
       },
     })
+  }
+}
+
+function clearRegionLines(regions, map) {
+  for (const region of regions) {
+    try {
+      map.removeLayer(region.code)
+      map.removeSource(region.code)
+    // eslint-disable-next-line no-empty
+    } catch (err) {}
   }
 }
 

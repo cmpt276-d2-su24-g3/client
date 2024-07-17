@@ -3,6 +3,7 @@ import { Map } from './Map'
 import { LocationInput, LocationType } from './LocationInput'
 import { RegionsInput } from './RegionsInput'
 import LatencyTable from './LatencyTable'
+import { memoize } from '@/lib/utils'
 
 // TODO: Generate based on user location?
 const DEFAULT_REGION_AREAS = ['Canada', 'US West', 'US East']
@@ -50,6 +51,8 @@ export function Latency() {
       if (loading || error || regions.length === 0) return
       if (location.type === LocationType.User)
         await getClientRegionLatencies(regions, setLatencies)
+      else if (location.type === LocationType.Region && location.code)
+        await getRegionRegionLatencies(location.code, latencies, setLatencies)
     })()
   }, [location, regions, loading, error])
 
@@ -95,6 +98,34 @@ async function getClientRegionLatency(region) {
   const latency = performance.now() - now
   return latency
 }
+
+async function getRegionRegionLatencies(origin, latencies, setLatencies) {
+  latencies = latencies.map((l) => ({ ...l, latency: Infinity }))
+  setLatencies(latencies)
+  const data = await getRegionRegionDataCached(origin)
+  const newLatencies = [...latencies]
+  latencies.forEach((latency, i) => {
+    if (latency.region === origin) return
+    const newLatency = data.find((l) => l.destination === latency.region)
+    if (newLatency) newLatencies[i].latency = newLatency.latency
+  })
+  setLatencies(newLatencies)
+}
+
+async function getRegionRegionData(origin) {
+  const response = await fetch(
+    import.meta.env.VITE_AWS_API_URL + `/r2r/?origin=${origin}`,
+  )
+  const json = await response.json()
+
+  return json.Items.map((item) => ({
+    origin: item.source_region.S,
+    destination: item.destination.S,
+    latency: parseFloat(item.latency.N),
+    timestamp: Date.parse(item.timestamp.S),
+  })).sort((a, b) => a.timestamp - b.timestamp)
+}
+const getRegionRegionDataCached = memoize(getRegionRegionData)
 
 /**
  * @typedef {Object} location
