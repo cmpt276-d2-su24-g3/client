@@ -7,7 +7,7 @@ export function Logout() {
     console.log("Logging Out");
     const navigate = useNavigate()
     useEffect(() => {
-        axios.get(`http://localhost:8080/test/logout`, { withCredentials: true })
+        axios.get(`https://f2ggum2vms.us-west-2.awsapprunner.com/logout`, { withCredentials: true })
             .then(response => {
                 Cookies.remove('access_token');
                 Cookies.remove('id_token');

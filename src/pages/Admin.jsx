@@ -16,11 +16,3 @@ export function Admin() {
     navigate('/');
     return <div>Loading...</div>;
 }
-
-function isAdmin() {
-    const token = Cookies.get('id_token');
-    console.log(jwtDecode(token));
-    const decoded = jwtDecode(token);
-    console.log(decoded['cognito:groups'] && Array.isArray(decoded['cognito:groups']) && decoded['cognito:groups'].includes('admin'));
-    return (decoded['cognito:groups'] && Array.isArray(decoded['cognito:groups']) && decoded['cognito:groups'].includes('admin'));
-}
