@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { NavBar } from '@/components/NavBar'
+import { ServiceDesc } from '@/components/ServiceDesc'
 
 export function Root() {
   /*const [user, setUser] = useState([])
@@ -13,17 +14,21 @@ export function Root() {
   }, [])*/
 
   return (
-    <div>
-      <NavBar />
-      <h1>Portal</h1>
-      <h2>Welcome</h2>
-      <Link to="/latency">Latency</Link>
-      <br></br>
-      <a href="https://yyc-portal.auth.us-west-2.amazoncognito.com/login?client_id=481g1a0ridauh779f34tvsti05&response_type=code&scope=email+openid&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Flogin">Login</a>
-      <br></br>
-      <a href="https://yyc-portal.auth.us-west-2.amazoncognito.com/logout?client_id=481g1a0ridauh779f34tvsti05&response_type=code&scope=email+openid&logout_uri=http%3A%2F%2Flocalhost%3A5173%2Flogout">Logout</a>
-      <br></br>
+    <div className="bg-sky-100 min-h-screen">
+      <NavBar page="Dashboard"/>
       <Link to="/admin">Admin</Link>
+      <div>
+        <div className="text-center my-16">
+          <h1 className="text-2xl">Our services</h1>
+          <p className="text-lg mt-4">Our tools provide precise latency data for location-to-region, region-to-location, and region-to-region testing,
+            <br></br>helping you ensure efficient and reliable network performance.</p>
+        </div>
+        <div className="flex justify-center gap-8">
+          <ServiceDesc card_title={"Location to Region"} description={"View ping times from your location to selected AWS regions"}/>
+          <ServiceDesc card_title={"Region to Region"} description={"View ping times from selected AWS regions to other AWS regions"}/>
+          <ServiceDesc card_title={"Region to Location"} description={"View ping times from selected AWS regions to an address"}/>
+        </div>
+      </div>
     </div>
   )
 }
