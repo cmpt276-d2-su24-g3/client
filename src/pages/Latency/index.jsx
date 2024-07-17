@@ -6,7 +6,7 @@ import LatencyTable from './LatencyTable'
 import { memoize } from '@/lib/utils'
 
 // TODO: Generate based on user location?
-const DEFAULT_REGION_AREAS = ['Canada', 'US West', 'US East']
+const DEFAULT_REGION_AREAS = ['Americas']
 
 export function Latency() {
   const [regions, setRegions] = useState([])
