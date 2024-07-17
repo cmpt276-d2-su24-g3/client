@@ -75,7 +75,7 @@ export function Map({ regions, location }) {
   useEffect(() => {
     if (!addedMap) return
 
-    if (location)
+    if (location.latitude && location.longitude)
       map.current.flyTo({
         center: [location.longitude, location.latitude],
         zoom: DEFAULT_ZOOM,

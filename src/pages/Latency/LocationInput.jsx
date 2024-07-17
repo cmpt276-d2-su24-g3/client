@@ -38,10 +38,15 @@ export function LocationInput({ regions, setLocation }) {
     ;(async () => {
       switch (locationType) {
         case LocationType.User:
-          setLocation(null)
+          setLocation({
+            type: LocationType.User,
+          })
           break
         case LocationType.Region:
-          setLocation(regions.find((region) => region.code === regionCode))
+          setLocation({
+            ...regions.find((region) => region.code === regionCode),
+            type: LocationType.Region,
+          })
           break
         case LocationType.Host: {
           if (host) {
@@ -50,7 +55,10 @@ export function LocationInput({ regions, setLocation }) {
               if (!isIp(ip)) ip = await resolveHostIpCached(host)
               if (!isIp(ip)) return
               const location = await resolveIpLocationCached(ip)
-              setLocation(location)
+              setLocation({
+                ...location,
+                type: LocationType.Host,
+              })
             } catch (error) {
               setLocation(null)
             }

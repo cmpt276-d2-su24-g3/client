@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Map } from './Map'
-import { LocationInput } from './LocationInput'
+import { LocationInput, LocationType } from './LocationInput'
 import { RegionsInput } from './RegionsInput'
 import LatencyTable from './LatencyTable'
 
@@ -9,6 +9,7 @@ const DEFAULT_REGION_AREAS = ['Canada', 'US West', 'US East']
 
 export function Latency() {
   const [regions, setRegions] = useState([])
+  const [latencies, setLatencies] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [location, setLocation] = useState(null)
@@ -33,6 +34,25 @@ export function Latency() {
     })()
   }, [])
 
+  useEffect(() => {
+    if (latencies.length === regions.length) return
+
+    setLatencies(
+      regions.map((region) => ({
+        region: region.code,
+        latency: region.latency,
+      })),
+    )
+  }, [regions])
+
+  useEffect(() => {
+    ;(async () => {
+      if (loading || error || regions.length === 0) return
+      if (location.type === LocationType.User)
+        await getClientRegionLatencies(regions, setLatencies)
+    })()
+  }, [location, regions, loading, error])
+
   return (
     <div className="flex flex-row gap-4 p-4 h-dvh">
       <div className="flex flex-col grow">
@@ -51,6 +71,29 @@ export function Latency() {
       </div>
     </div>
   )
+}
+
+async function getClientRegionLatencies(regions, setLatencies) {
+  await Promise.all(
+    regions
+      .filter((region) => region.selected)
+      .map(async (region) => {
+        const latency = await getClientRegionLatency(region)
+        setLatencies((latencies) =>
+          latencies.map((l) =>
+            l.region === region.code ? { ...l, latency } : l,
+          ),
+        )
+      }),
+  )
+}
+
+async function getClientRegionLatency(region) {
+  const url = `https://dynamodb.${region.code}.amazonaws.com`
+  const now = performance.now()
+  await fetch(url)
+  const latency = performance.now() - now
+  return latency
 }
 
 /**
