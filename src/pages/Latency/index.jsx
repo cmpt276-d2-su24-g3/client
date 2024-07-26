@@ -4,6 +4,7 @@ import { LocationInput, LocationType } from './LocationInput'
 import { RegionsInput } from './RegionsInput'
 import LatencyTable from './LatencyTable'
 import { memoize } from '@/lib/utils'
+import { NavBar } from '@/components/NavBar'
 
 // TODO: Generate based on user location?
 const DEFAULT_REGION_AREAS = ['Americas']
@@ -57,6 +58,8 @@ export function Latency() {
   }, [location, regions, loading, error])
 
   return (
+    <>
+    <NavBar />
     <div className="flex flex-row gap-4 p-4 h-dvh">
       <div className="flex flex-col grow">
         <h1 className="text-3xl">Latency</h1>
@@ -73,6 +76,7 @@ export function Latency() {
         <LatencyTable regions={regions} latencies={latencies} />
       </div>
     </div>
+    </>
   )
 }
 
