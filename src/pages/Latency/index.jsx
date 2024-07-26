@@ -53,6 +53,8 @@ export function Latency() {
         await getClientRegionLatencies(regions, setLatencies)
       else if (location.type === LocationType.Region && location.code)
         await getRegionRegionLatencies(location.code, latencies, setLatencies)
+      else if (location.type === LocationType.Website && location.url)
+        await getRegionClientLatencies(location.url, setLatencies)
     })()
   }, [location, regions, loading, error])
 
@@ -99,6 +101,25 @@ async function getClientRegionLatency(region) {
   return latency
 }
 
+async function getRegionClientLatencies(url, setLatencies) {
+  try {
+    const encodedUrl = encodeURIComponent(url)
+    const response = await fetch(
+      `${import.meta.env.VITE_AWS_R2C_URL}?origin=${encodedUrl}`,
+    )
+    if (!response.ok) throw new Error('Failed to fetch region client latencies')
+    const data = await response.json()
+    setLatencies(
+      data.map((item) => ({
+        region: item.region,
+        latency: parseFloat(item.latency),
+      }))
+    )
+  } catch (error) {
+    console.error('Error fetching region client latencies:', error)
+  }
+}
+
 async function getRegionRegionLatencies(origin, latencies, setLatencies) {
   latencies = latencies.map((l) => ({ ...l, latency: Infinity }))
   setLatencies(latencies)
@@ -127,9 +148,3 @@ async function getRegionRegionData(origin) {
 }
 
 const getRegionRegionDataCached = memoize(getRegionRegionData)
-
-/**
- * @typedef {Object} location
- * @property {string} latitude
- * @property {string} longitude
- */

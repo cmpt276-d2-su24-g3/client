@@ -18,17 +18,18 @@ import { memoize } from '@/lib/utils'
 const resolveHostIpCached = memoize(resolveHostIp)
 const resolveIpLocationCached = memoize(resolveIpLocation)
 
-// Wish we used TypeScript
 export const LocationType = Object.freeze({
   User: 'user',
   Region: 'region',
   Host: 'host',
+  Website: 'website', // Added LocationType for Website
 })
 
 export function LocationInput({ regions, setLocation }) {
   const [locationType, setLocationType] = useState(LocationType.User)
   const [regionCode, setRegionCode] = useState(null)
   const [host, setHost] = useState(null)
+  const [url, setUrl] = useState('') // Added state for URL
 
   const prevBinaryLocationType = useRef(
     locationType !== LocationType.User ? locationType : LocationType.Region,
@@ -65,14 +66,25 @@ export function LocationInput({ regions, setLocation }) {
           }
           break
         }
+        case LocationType.Website: {
+          if (url) {
+            setLocation({
+              type: LocationType.Website,
+              url: url, // Set URL in location
+            })
+          }
+          break
+        }
       }
     })()
-  }, [locationType, regionCode, host])
+  }, [locationType, regionCode, host, url])
 
   function handleSwap() {
     const newLocationType =
       locationType === LocationType.Region
         ? LocationType.Host
+        : locationType === LocationType.Host
+        ? LocationType.Website
         : LocationType.Region
     setLocationType(newLocationType)
     prevBinaryLocationType.current = newLocationType
@@ -119,6 +131,21 @@ export function LocationInput({ regions, setLocation }) {
             onBlur={(e) => setHost(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && setHost(e.target.value)}
           />
+          {prevBinaryLocationType.current !== LocationType.Website && (
+            <Input disabled placeholder="URL" className="w-fit" />
+          )}
+          <Input
+            placeholder="Website URL"
+            className={
+              'w-fit' +
+              (prevBinaryLocationType.current !== LocationType.Website
+                ? ' hidden'
+                : '')
+            }
+            disabled={locationType === LocationType.User}
+            onBlur={(e) => setUrl(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && setUrl(e.target.value)}
+          />
 
           <div className="flex items-center gap-2 pl-4">
             <Checkbox
@@ -144,6 +171,7 @@ export function LocationInput({ regions, setLocation }) {
     </Card>
   )
 }
+
 LocationInput.propTypes = {
   regions: PropTypes.array.isRequired,
   setLocation: PropTypes.func.isRequired,
