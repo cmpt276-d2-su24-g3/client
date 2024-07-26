@@ -82,6 +82,7 @@ export function Latency() {
   )
 }
 
+//Client-to-Region
 async function getClientRegionLatencies(regions, setLatencies) {
   await Promise.all(
     regions
@@ -105,6 +106,8 @@ async function getClientRegionLatency(region) {
   return latency
 }
 
+
+//Region-to-Client
 async function getRegionClientLatencies(url, setLatencies) {
   try {
     const encodedUrl = encodeURIComponent(url)
@@ -124,6 +127,7 @@ async function getRegionClientLatencies(url, setLatencies) {
   }
 }
 
+//Region-to-Region
 async function getRegionRegionLatencies(origin, latencies, setLatencies) {
   latencies = latencies.map((l) => ({ ...l, latency: Infinity }))
   setLatencies(latencies)
