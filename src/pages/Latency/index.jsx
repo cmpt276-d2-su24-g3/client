@@ -114,17 +114,18 @@ async function getRegionRegionLatencies(origin, latencies, setLatencies) {
 
 async function getRegionRegionData(origin) {
   const response = await fetch(
-    import.meta.env.VITE_AWS_API_URL + `/r2r/?origin=${origin}`,
+    import.meta.env.VITE_AWS_API_URL + `?origin=${origin}`,
   )
   const json = await response.json()
 
-  return json.Items.map((item) => ({
-    origin: item.source_region.S,
-    destination: item.destination.S,
-    latency: parseFloat(item.latency.N),
-    timestamp: Date.parse(item.timestamp.S),
+  return json.details.map((item) => ({
+    origin: item.origin,
+    destination: item.destination,
+    latency: parseFloat(item.latency),
+    timestamp: new Date(item.timestamp).getTime(),
   })).sort((a, b) => a.timestamp - b.timestamp)
 }
+
 const getRegionRegionDataCached = memoize(getRegionRegionData)
 
 /**
