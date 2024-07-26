@@ -22,13 +22,13 @@ export const LocationType = Object.freeze({
   User: 'user',
   Region: 'region',
   Host: 'host',
-  Website: 'website', // Added LocationType for Website
+  Website: 'website', // LocationType for Website
 })
 
 export function LocationInput({ regions, setLocation }) {
   const [locationType, setLocationType] = useState(LocationType.User)
   const [regionCode, setRegionCode] = useState(null)
-  const [url, setUrl] = useState('') // Added state for URL
+  const [url, setUrl] = useState('') // state for URL
 
   const prevBinaryLocationType = useRef(
     locationType !== LocationType.User ? locationType : LocationType.Region,
@@ -49,14 +49,14 @@ export function LocationInput({ regions, setLocation }) {
           })
           break
         case LocationType.Host: {
-          // Removed Host handling
+          
           break
         }
         case LocationType.Website: {
           if (url) {
             setLocation({
               type: LocationType.Website,
-              url: url, // Set URL in location
+              url: url, // URL in location
             })
           }
           break
@@ -89,7 +89,7 @@ export function LocationInput({ regions, setLocation }) {
             hidden={locationType !== LocationType.Region}
           />
           {locationType !== LocationType.Region && (
-            <Input disabled placeholder="Regions" className="w-fit" />
+            <Input disabled placeholder={locationType === LocationType.User ? "Regions" : "AWS Region"} className="w-fit" />
           )}
           <Button
             onClick={handleSwap}
@@ -101,7 +101,7 @@ export function LocationInput({ regions, setLocation }) {
             <ArrowRightLeft className="w-4 h-4" />
           </Button>
           <Input
-            placeholder="Website URL"
+            placeholder={locationType === LocationType.Website ? "Website URL" : "AWS regions"}
             className="w-fit"
             disabled={locationType !== LocationType.Website}
             onBlur={(e) => setUrl(e.target.value)}
