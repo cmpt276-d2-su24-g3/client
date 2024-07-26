@@ -225,7 +225,7 @@ function addRegionLines(regions, center, map) {
       type: 'line',
       paint: {
         'line-color': '#888',
-        'line-width': 0.5,
+        'line-width': 1,
         'line-dasharray': [4, 4],
       },
       layout: {
