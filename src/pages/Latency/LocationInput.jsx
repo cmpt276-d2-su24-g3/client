@@ -28,7 +28,6 @@ export const LocationType = Object.freeze({
 export function LocationInput({ regions, setLocation }) {
   const [locationType, setLocationType] = useState(LocationType.User)
   const [regionCode, setRegionCode] = useState(null)
-  const [host, setHost] = useState(null)
   const [url, setUrl] = useState('') // Added state for URL
 
   const prevBinaryLocationType = useRef(
@@ -50,20 +49,7 @@ export function LocationInput({ regions, setLocation }) {
           })
           break
         case LocationType.Host: {
-          if (host) {
-            try {
-              let ip = host
-              if (!isIp(ip)) ip = await resolveHostIpCached(host)
-              if (!isIp(ip)) return
-              const location = await resolveIpLocationCached(ip)
-              setLocation({
-                ...location,
-                type: LocationType.Host,
-              })
-            } catch (error) {
-              setLocation(null)
-            }
-          }
+          // Removed Host handling
           break
         }
         case LocationType.Website: {
@@ -77,13 +63,11 @@ export function LocationInput({ regions, setLocation }) {
         }
       }
     })()
-  }, [locationType, regionCode, host, url])
+  }, [locationType, regionCode, url])
 
   function handleSwap() {
     const newLocationType =
       locationType === LocationType.Region
-        ? LocationType.Host
-        : locationType === LocationType.Host
         ? LocationType.Website
         : LocationType.Region
     setLocationType(newLocationType)
@@ -102,9 +86,9 @@ export function LocationInput({ regions, setLocation }) {
             regions={regions}
             setRegion={setRegionCode}
             disabled={locationType !== LocationType.Region}
-            hidden={prevBinaryLocationType.current !== LocationType.Region}
+            hidden={locationType !== LocationType.Region}
           />
-          {prevBinaryLocationType.current !== LocationType.Region && (
+          {locationType !== LocationType.Region && (
             <Input disabled placeholder="Regions" className="w-fit" />
           )}
           <Button
@@ -116,33 +100,10 @@ export function LocationInput({ regions, setLocation }) {
           >
             <ArrowRightLeft className="w-4 h-4" />
           </Button>
-          {prevBinaryLocationType.current !== LocationType.Host && (
-            <Input disabled placeholder="Regions" className="w-fit" />
-          )}
-          <Input
-            placeholder="URL or IP"
-            className={
-              'w-fit' +
-              (prevBinaryLocationType.current !== LocationType.Host
-                ? ' hidden'
-                : '')
-            }
-            disabled={locationType === LocationType.User}
-            onBlur={(e) => setHost(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && setHost(e.target.value)}
-          />
-          {prevBinaryLocationType.current !== LocationType.Website && (
-            <Input disabled placeholder="URL" className="w-fit" />
-          )}
           <Input
             placeholder="Website URL"
-            className={
-              'w-fit' +
-              (prevBinaryLocationType.current !== LocationType.Website
-                ? ' hidden'
-                : '')
-            }
-            disabled={locationType === LocationType.User}
+            className="w-fit"
+            disabled={locationType !== LocationType.Website}
             onBlur={(e) => setUrl(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && setUrl(e.target.value)}
           />
