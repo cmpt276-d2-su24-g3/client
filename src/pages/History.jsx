@@ -5,6 +5,8 @@ import { NavBar } from '@/components/NavBar'
 import { Separator } from "@/components/ui/separator"
 import { Input } from '@/components/ui/input'
 import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from '@/components/ui/button'
+import { Component as LinearChart } from '@/components/ui/linearchart'
 import {
     Table,
     TableBody,
@@ -14,7 +16,8 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"  
-import { Button } from '@/components/ui/button'
+
+import regions from '@/regions.json'
 
 const InfoBlock = ({ type, latency}) => {
     return (
@@ -25,7 +28,7 @@ const InfoBlock = ({ type, latency}) => {
     )
 }
 
-export function History({ regions, setRegions }) {
+export function History({ regions_json, setRegions }) {
     const [searched, setSearched] = useState("")
     const [tableIndex, setTableIndex] = useState(1)
 
@@ -37,9 +40,8 @@ export function History({ regions, setRegions }) {
                     <span className='text-2xl font-bold'>Historical Latency - Worldwide</span>
                     <span className='text-gray-400'>View historical latency from location to AWS data centers worldwide</span>
                     <div className='flex my-4 bg-white rounded-lg'>
-                        <div className='flex flex-col w-2/3 p-4'>
-                            <span className='text-xl font-semibold'>Latency</span>
-                            <div>Chart</div>
+                        <div className='w-3/5'>
+                            <LinearChart/>
                         </div>
                         <div className="flex-1 grid grid-cols-2 grid-rows-2">
                             <InfoBlock type="16:00 PST" latency="84 ms"/>
