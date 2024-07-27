@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Amazon-Ember-Medium';
+    src: local('Amazon-Ember-Medium') url('./Amazon-Ember-Medium.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+  
+body {
+    font-family: 'Amazon-Ember-Medium', sans-serif;
+}
