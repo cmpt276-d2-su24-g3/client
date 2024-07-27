@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 
 import { NavBar } from '@/components/NavBar'
@@ -10,27 +10,44 @@ import { Component as LinearChart } from '@/components/ui/linearchart'
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/components/ui/table"  
-
-import regions from '@/regions.json'
+  } from "@/components/ui/table"
 
 const InfoBlock = ({ type, latency}) => {
     return (
-        <div className="flex flex-col justify-center items-center border">
+        <div className="flex flex-col items-center justify-center border">
             <span className='text-gray-400'>{type}</span>
             <span className='text-2xl text-gray-700'>{latency}</span>
         </div>
     )
 }
 
-export function History({ regions_json, setRegions }) {
+export function History() {
+    const [regions, setRegions] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
     const [searched, setSearched] = useState("")
     const [tableIndex, setTableIndex] = useState(1)
+
+    useEffect(() => {
+        ;(async () => {
+          try {
+            const res = await fetch(
+              import.meta.env.VITE_API_URL + '/data/regions.json',
+            )
+            if (!res.ok) throw new Error('Failed to fetch regions')
+            const regions = await res.json()
+            setRegions(regions)
+          } catch (error) {
+            setError(error)
+          } finally {
+            setLoading(false)
+          }
+        })()
+      }, [])
 
     return (
         <div>
@@ -43,7 +60,7 @@ export function History({ regions_json, setRegions }) {
                         <div className='w-3/5'>
                             <LinearChart/>
                         </div>
-                        <div className="flex-1 grid grid-cols-2 grid-rows-2">
+                        <div className="grid flex-1 grid-cols-2 grid-rows-2">
                             <InfoBlock type="16:00 PST" latency="84 ms"/>
                             <InfoBlock type="Live" latency="104 ms"/>
                             <InfoBlock type="P50" latency="95 ms"/>
@@ -51,7 +68,7 @@ export function History({ regions_json, setRegions }) {
                         </div>
                     </div>
                     <div className="flex">
-                        <div className="flex flex-col justify-evenly bg-white p-4 mr-2 w-2/5 rounded-lg">
+                        <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
                             <div className='flex flex-col'>
                                 <span className='text-gray-400'>Starting location:</span>
                                 <span className='text-2xl text-gray-700'>Location</span>
@@ -62,7 +79,7 @@ export function History({ regions_json, setRegions }) {
                                 <span className='text-2xl text-gray-700'>Location</span>
                             </div>
                         </div>
-                        <div className="bg-white p-4 ml-2 flex-1 rounded-lg">
+                        <div className="flex-1 p-4 ml-2 bg-white rounded-lg">
                             <div className='flex justify-between'>
                                 <div className='flex flex-col'>
                                     <span className='text-xl font-semibold'>Region Performance </span>
@@ -85,7 +102,7 @@ export function History({ regions_json, setRegions }) {
                                 </TableHeader>
                                 <TableBody className='text-xs'>
                                     {
-                                        regions.map((region, index) => (
+                                        regions?.map((region, index) => (
                                             (region.name.toUpperCase() == searched.toUpperCase() ||
                                             (searched == "" && index >= tableIndex * 3 - 2 && index <= tableIndex * 3)) &&
                                             <TableRow key={region.code}>
@@ -93,7 +110,7 @@ export function History({ regions_json, setRegions }) {
                                                 <TableCell>{region.name} ({region.area})</TableCell>
                                                 <TableCell>{region.code}</TableCell>
                                                 <TableCell>100 ms</TableCell>
-                                            </TableRow>    
+                                            </TableRow>
                                         ))
                                     }
                                 </TableBody>
@@ -113,7 +130,7 @@ export function History({ regions_json, setRegions }) {
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="aspect-square ml-2"
+                                className="ml-2 aspect-square"
                                 onClick={() => {
                                     tableIndex < regions.length / 3 &&
                                     setTableIndex(tableIndex + 1)
