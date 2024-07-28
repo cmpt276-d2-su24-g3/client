@@ -19,8 +19,8 @@ import {
 const InfoBlock = ({ type, latency }) => {
   return (
     <div className="flex flex-col items-center justify-center border">
-      <span className="text-gray-400">{type}</span>
-      <span className="text-2xl text-gray-700">{latency}</span>
+      <span className="text-2xl text-gray-400">{type}</span>
+      <span className="text-4xl text-gray-700">{latency}</span>
     </div>
   )
 }
@@ -53,7 +53,7 @@ export function History() {
     <div>
       <NavBar page="Latency History" />
       <div className="flex justify-center min-h-screen py-8 bg-sky-100">
-        <div className="flex flex-col w-10/12">
+        <div className="flex flex-col w-11/12">
           <span className="text-2xl font-bold">
             Historical Latency - Worldwide
           </span>
@@ -61,7 +61,7 @@ export function History() {
             View historical latency from location to AWS data centers worldwide
           </span>
           <div className="flex my-4 bg-white rounded-lg">
-            <div className="w-3/5">
+            <div className="w-1/2">
               <LinearChart />
             </div>
             <div className="grid flex-1 grid-cols-2 grid-rows-2">
