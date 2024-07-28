@@ -24,7 +24,7 @@ export function NavBar({ page }) {
                     Service Availability
                     {page == "Service Availability" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
-                <Link className="mx-5" to="/latency">
+                <Link className="mx-5" to="/history">
                     Latency History
                     {page == "Latency History" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
