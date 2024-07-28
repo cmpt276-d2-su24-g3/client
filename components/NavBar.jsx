@@ -12,8 +12,10 @@ export function NavBar({ page }) {
                     src={AWS_Logo}
                     className="mx-5 h-6"
                 />
-                <span className="mx-5">YYC Portal</span>
-                
+                <Link className="mx-5" to="/">
+                    YYC Portal
+                    {page == "YYC Portal" && <div className="py-1 bg-orange-500"></div>}
+                </Link>
                 <Link className="mx-5" to="/latency">
                     Dashboard
                     {page == "Dashboard" && <div className="py-1 bg-orange-500"></div>}
