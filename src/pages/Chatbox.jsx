@@ -1,22 +1,62 @@
-<<<<<<< Updated upstream
-=======
-import { NavBar } from '@/components/NavBar'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
 
->>>>>>> Stashed changes
 export function Chatbox() {
-    const [data, setData] = useState(null)
+  const [input, setInput] = useState('');
+  const [uuid, setUuid] = useState('');
+  const [data, setData] = useState('');
 
-    useEffect(() => {
-        axios.get('http://zefta.catalpa.pw:8000/')
-            .then(response => setData(response.data))
-            .catch(error => console,error('Error fetching data', error))
-    }, []);
+  const handleInputChange = (event) => {
+    setInput(event.target.value);
+  };
 
-    return (
-        <div>
-            hello
-        </div>
-    )
+  const handleUuidChange = (event) => {
+    setUuid(event.target.value);
+  };
+
+  const handleButtonClick = async () => {
+    setData('');
+    const requestData = {
+      input: input,
+      session_id: uuid,  // UUID v4
+      time: new Date().toISOString()  // ISO 8601
+    };
+
+    const response = await fetch('http://zefta.catalpa.pw:8000/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let chunk;
+    let text = '';
+
+    while (!(chunk = await reader.read()).done) {
+      text += decoder.decode(chunk.value, { stream: true });
+      setData(text);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Streamed Data</h1>
+      <input
+        type="text"
+        value={input}
+        onChange={handleInputChange}
+        placeholder="Enter your input"
+      />
+      <input
+        type="text"
+        value={uuid}
+        onChange={handleUuidChange}
+        placeholder="Enter your UUID v4"
+      />
+      <button onClick={handleButtonClick}>Send</button>
+      <pre>{data}</pre>
+    </div>
+  );
 }
