@@ -15,16 +15,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { time: "9:30 am", latency: 95 },
-  { time: "10:00 am", latency: 110 },
-  { time: "10:30 am", latency: 100 },
-  { time: "11:00 am", latency: 120 },
-  { time: "11:30 am", latency: 115 },
-  { time: "12:00 pm", latency: 100 },
-  { time: "12:30 pm", latency: 90 },
-  { time: "1:00 pm", latency: 95 },
-]
 
 const chartConfig = {
   latency: {
@@ -33,23 +23,23 @@ const chartConfig = {
   },
 }
 
-export function Component() {
+export function Component({ pings, startingLocation, destination }) {
   return (
-    <div>
+    <Card>
       <CardHeader>
         <CardTitle>Latency</CardTitle>
         <CardDescription>
-          Tokyo (ap-northeast-1)
+          {startingLocation + " to " + destination}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <AreaChart
             accessibilityLayer
-            data={chartData}
+            data={pings}
             margin={{
               left: 12,
-              right: 12,  
+              right: 12,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -78,6 +68,6 @@ export function Component() {
           </AreaChart>
         </ChartContainer>
       </CardContent>
-    </div>
+    </Card>
   )
 }
