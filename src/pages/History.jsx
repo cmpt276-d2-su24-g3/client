@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { ArrowDown, ArrowUp } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowLeft, ArrowDown, ArrowUp } from 'lucide-react'
 
 import { NavBar } from '@/components/NavBar'
 import { Separator } from '@/components/ui/separator'
@@ -25,15 +26,21 @@ const InfoBlock = ({ type, latency }) => {
   )
 }
 
-export function History() {
+export function History({ startFromLatency, destinationFromLatency }) {
   const [regions, setRegions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searched, setSearched] = useState('')
   const [tableIndex, setTableIndex] = useState(1)
   const [pings, setPings] = useState([])
-  const [startingLocation, setStartingLocation] = useState('us-west-2')
-  const [destination, setDestination] = useState('af-south-1')
+  const [startingLocation, setStartingLocation] = useState(startFromLatency)
+  const [destination, setDestination] = useState(destinationFromLatency)
+  // If a user acceses the page by clicking on the latency history page at the top (So not clicking isoline) then use these destinations
+  // Otherwise, use the locations from the isoline
+  if (!startingLocation && !destination) {
+    setStartingLocation('us-west-2')
+    setDestination('af-south-1')
+  }
 
   useEffect(() => {
     ;(async () => {
@@ -78,11 +85,38 @@ export function History() {
     })()
   }, [startingLocation, destination])
 
+  const getLatencyAt = (hour) => {
+    const targetHour = hour.toString().padStart(2, '0')
+    const filteredPings = pings.filter(ping => {
+      const [time, period] = ping.time.split(' ')
+      const [hours, minutes, seconds] = time.split(':').map(Number)
+      const parsedHour = period === 'PM' && hours !== 12 ? hours + 12 : (period === 'AM' && hours === 12 ? 0 : hours)
+      const pingHour = parsedHour.toString().padStart(2, '0')
+      return pingHour === targetHour
+    })
+    if (filteredPings.length === 0) return 'N/A'
+    const averageLatency = filteredPings.reduce((sum, ping) => sum + parseFloat(ping.latency), 0) / filteredPings.length
+    return Math.round(averageLatency) + ' ms'
+  }
+  
+  const getLiveLatency = () => {
+    const lastPing = pings[pings.length - 1]
+    return lastPing ? Math.round(lastPing.latency) + ' ms' : 'N/A'
+  }
+
+  const getPercentileLatency = (percentile) => {
+    if (pings.length === 0) return 'N/A'
+    const sortedLatencies = pings.map(ping => ping.latency).sort((a, b) => a - b)
+    const index = Math.floor((percentile / 100) * sortedLatencies.length)
+    return Math.round(sortedLatencies[index]) + ' ms'
+  }
+
   return (
     <div>
       <NavBar page="Latency History" />
       <div className="flex justify-center min-h-screen py-8 bg-sky-100">
         <div className="flex flex-col w-11/12">
+          <Link to="/latency" className="m-2"><ArrowLeft /></Link>
           <span className="text-2xl font-bold">
             Historical Latency - Worldwide
           </span>
@@ -94,22 +128,22 @@ export function History() {
               <LinearChart pings={pings} startingLocation={startingLocation} destination={destination}/>
             </div>
             <div className="grid flex-1 grid-cols-2 grid-rows-2">
-              <InfoBlock type="16:00 PST" latency="84 ms" />
-              <InfoBlock type="Live" latency="104 ms" />
-              <InfoBlock type="P50" latency="95 ms" />
-              <InfoBlock type="P90" latency="93 ms" />
+              <InfoBlock type="16:00 PST" latency={getLatencyAt(16)} />
+              <InfoBlock type="Live" latency={getLiveLatency()} />
+              <InfoBlock type="P50" latency={getPercentileLatency(50)} />
+              <InfoBlock type="P90" latency={getPercentileLatency(90)} />
             </div>
           </div>
           <div className="flex">
             <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
               <div className="flex flex-col">
                 <span className="text-gray-400">Starting location:</span>
-                <span className="text-2xl text-gray-700">Location</span>
+                <span className="text-2xl text-gray-700">{startingLocation}</span>
               </div>
               <Separator />
               <div className="flex flex-col">
                 <span className="text-gray-400">Destination:</span>
-                <span className="text-2xl text-gray-700">Location</span>
+                <span className="text-2xl text-gray-700">{destination}</span>
               </div>
             </div>
             <div className="flex-1 p-4 ml-2 bg-white rounded-lg">
@@ -148,9 +182,9 @@ export function History() {
                           index <= tableIndex * 3)) && (
                         <TableRow key={region.code}>
                           <TableCell>
-                            <Checkbox />
+                            <Button variant="outline" onClick={() => {setDestination(region.code)}}>Select</Button>
+                            {/* <Checkbox /> */}
                           </TableCell>{' '}
-                          {/* Should this be a button instead? */}
                           <TableCell>
                             {region.name} ({region.area})
                           </TableCell>
