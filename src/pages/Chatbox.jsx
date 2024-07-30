@@ -27,6 +27,7 @@ export function Chatbox() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-API-Key': import.meta.env.VITE_CHATBOT_API_KEY,
       },
       body: JSON.stringify(requestData),
     });
