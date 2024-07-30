@@ -23,7 +23,6 @@ export function Root() {
   return (
     <div className="bg-sky-50 min-h-screen">
       <NavBar page="YYC Portal"/>
-      <Link to="/admin">Admin</Link>
       <div className='flex justify-end'>
         <button className='p-1 px-3 m-4 border-4 border-blue-500 rounded-full text-blue-500'>client-to-region</button>
         <button className='p-1 px-3 m-4 border-4 border-blue-500 rounded-full text-blue-500'>region-to-region</button>
