@@ -51,6 +51,16 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Custom Colors
+        customPurple: '#706A88',
+        customLavender: '#A89EB3',
+        customMauve: '#9D93A8',
+        customBg: '#F5F8FF',
+        customBtn: '#4F0DDA',
+        customText: '#556982'
+      },
+      fontFamily: {
+        ember: ['Amazon Ember', 'ui-sans-serif', 'system-ui'], // Extend the default sans font family
       },
       borderRadius: {
         lg: 'var(--radius)',

@@ -18,17 +18,22 @@ import { memoize } from '@/lib/utils'
 const resolveHostIpCached = memoize(resolveHostIp)
 const resolveIpLocationCached = memoize(resolveIpLocation)
 
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiYmhhdmppdGNoYXVoYW4iLCJhIjoiY2x5MG95ejEzMGhuMDJtb2tvb3RpZHMyMiJ9.fJafGFJkITooEewonltjGw'
+
 export const LocationType = Object.freeze({
   User: 'user',
   Region: 'region',
   Host: 'host',
-  Website: 'website', // LocationType for Website
+  Website: 'website',
 })
 
 export function LocationInput({ regions, setLocation }) {
   const [locationType, setLocationType] = useState(LocationType.User)
   const [regionCode, setRegionCode] = useState(null)
   const [url, setUrl] = useState('') // state for URL
+  const [userLocation, setUserLocation] = useState(null) // state for user location
+  const [selectedRegion, setSelectedRegion] = useState(null) // state for selected region
+  const [websiteUrl, setWebsiteUrl] = useState('') // state for website URL
 
   const prevBinaryLocationType = useRef(
     locationType !== LocationType.User ? locationType : LocationType.Region,
@@ -43,13 +48,15 @@ export function LocationInput({ regions, setLocation }) {
           })
           break
         case LocationType.Region:
+          const region = regions.find((region) => region.code === regionCode)
           setLocation({
-            ...regions.find((region) => region.code === regionCode),
+            ...region,
             type: LocationType.Region,
           })
+          setSelectedRegion(region ? region.name : null)
           break
         case LocationType.Host: {
-          
+          // Handle Host case
           break
         }
         case LocationType.Website: {
@@ -58,12 +65,36 @@ export function LocationInput({ regions, setLocation }) {
               type: LocationType.Website,
               url: url, // URL in location
             })
+            setWebsiteUrl(url)
           }
           break
         }
       }
     })()
   }, [locationType, regionCode, url])
+
+  useEffect(() => {
+    if (locationType === LocationType.User) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords
+          try {
+            const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_ACCESS_TOKEN}`)
+            const data = await response.json()
+            const location = data.features[0]?.place_name || 'Unknown location'
+            setUserLocation(location)
+          } catch (error) {
+            console.error('Error getting location:', error)
+            setUserLocation('Unable to retrieve location')
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error)
+          setUserLocation('Unable to retrieve location')
+        }
+      )
+    }
+  }, [locationType])
 
   function handleSwap() {
     const newLocationType =
@@ -77,11 +108,27 @@ export function LocationInput({ regions, setLocation }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Location</CardTitle>
-        <CardDescription>Select where to get the latency from.</CardDescription>
+        <CardDescription>Location</CardDescription>
+        {locationType === LocationType.User && (
+          <CardTitle>
+            {userLocation || 'Fetching...'}
+          </CardTitle>
+        )}
+        {locationType === LocationType.Region && selectedRegion && (
+          <CardTitle>
+            {selectedRegion}
+          </CardTitle>
+        )}
+        {locationType === LocationType.Website && websiteUrl && (
+          <CardTitle>
+            {websiteUrl}
+          </CardTitle>
+        )}
+        <div class="border-b-2 pt-0 border-dotted border-gray-300"></div>
+
       </CardHeader>
       <CardContent>
-        <div className="flex gap-2 align-middle">
+      <div className="flex gap-2 align-middle">
           <RegionCombobox
             regions={regions}
             setRegion={setRegionCode}

@@ -1,8 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie';
+import { isAdmin } from '@/lib/utils';
 
 export function Admin() {
     const navigate = useNavigate()

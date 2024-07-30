@@ -2,21 +2,23 @@ import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
 
 export const columns = [
+  
   {
     accessorKey: 'regionName',
     header: 'Region',
   },
+  
   {
     accessorKey: 'latency',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          className="float-right"
+          className="float-right text-customPurple"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Latency
-          <ArrowUpDown className="w-4 h-4 ml-2" />
+          <ArrowUpDown className="w-4 h-4 ml-2 -mr-4" />
         </Button>
       )
     },
@@ -24,7 +26,7 @@ export const columns = [
       const latency = row.getValue('latency')
 
       if (latency === Infinity)
-        return <div className="font-medium text-right">-</div>
+        return <div className="font-medium text-customPurple text-right">-</div>
 
       const formatted =
         latency.toLocaleString(undefined, {
@@ -32,7 +34,7 @@ export const columns = [
           maximumFractionDigits: 2,
         }) + ' ms'
 
-      return <div className="font-medium text-right">{formatted}</div>
+      return <div className="font-medium text-right text-gray-700">{formatted}</div>
     },
   },
 ]
