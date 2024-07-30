@@ -31,12 +31,15 @@ export function History() {
   const [error, setError] = useState(null)
   const [searched, setSearched] = useState('')
   const [tableIndex, setTableIndex] = useState(1)
+  const [pings, setPings] = useState([])
+  const [startingLocation, setStartingLocation] = useState('us-west-2')
+  const [destination, setDestination] = useState('af-south-1')
 
   useEffect(() => {
     ;(async () => {
       try {
         const res = await fetch(
-          import.meta.env.VITE_API_URL + '/data/regions.json',
+          import.meta.env.VITE_API_URL + '/data/regions.json'
         )
         if (!res.ok) throw new Error('Failed to fetch regions')
         const regions = await res.json()
@@ -48,6 +51,32 @@ export function History() {
       }
     })()
   }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch(
+          'https://ncst1bngw1.execute-api.us-west-2.amazonaws.com/dev/pingdata'
+        )
+        if (!res.ok) throw new Error('Failed to fetch pings')
+        const data = await res.json()
+
+        const filteredData = data.Items
+          .filter(item => 
+            item.origin.S === startingLocation &&
+            item.destination.S === destination
+          )
+          .map(item => ({
+            time: new Date(item.timestamp.S).toLocaleTimeString(),
+            latency: parseFloat(item.latency.N),
+          }))
+
+        setPings(filteredData)
+      } catch (error) {
+        setError(error)
+      }
+    })()
+  }, [startingLocation, destination])
 
   return (
     <div>
@@ -62,7 +91,7 @@ export function History() {
           </span>
           <div className="flex my-4 bg-white rounded-lg">
             <div className="w-1/2">
-              <LinearChart />
+              <LinearChart pings={pings} startingLocation={startingLocation} destination={destination}/>
             </div>
             <div className="grid flex-1 grid-cols-2 grid-rows-2">
               <InfoBlock type="16:00 PST" latency="84 ms" />
@@ -97,7 +126,7 @@ export function History() {
                   className="w-fit"
                   placeholder="Search data center"
                   onKeyPress={(e) =>
-                    e.key == 'Enter' && setSearched(e.target.value)
+                    e.key === 'Enter' && setSearched(e.target.value)
                   }
                 />
               </div>
@@ -113,8 +142,8 @@ export function History() {
                 <TableBody className="text-xs">
                   {regions?.map(
                     (region, index) =>
-                      (region.name.toUpperCase() == searched.toUpperCase() ||
-                        (searched == '' &&
+                      (region.name.toUpperCase() === searched.toUpperCase() ||
+                        (searched === '' &&
                           index >= tableIndex * 3 - 2 &&
                           index <= tableIndex * 3)) && (
                         <TableRow key={region.code}>
