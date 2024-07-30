@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 import AWS_Logo from "@/AWS_Logo.png"
 import { ProfileLogin } from './ui/ProfileLogin'
+import { ConditionalAdmin } from './ui/conditionalAdmin'
 
 export function NavBar({ page }) {
     return (
@@ -32,6 +33,10 @@ export function NavBar({ page }) {
                     Chatbox
                     {page == "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
+                <ConditionalAdmin
+                    prop={page}
+                />
+
             </div>
 
             <ProfileLogin />
