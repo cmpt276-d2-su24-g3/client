@@ -6,8 +6,9 @@ import { clamp, range } from '@/lib/utils'
 mapboxgl.accessToken =
   'pk.eyJ1IjoiYmhhdmppdGNoYXVoYW4iLCJhIjoiY2x5MG95ejEzMGhuMDJtb2tvb3RpZHMyMiJ9.fJafGFJkITooEewonltjGw'
 
-const DEFAULT_ZOOM = 3
-const LATENCY_THRESHOLD = 300
+const DEFAULT_ZOOM = 0.2;
+const MAX_ZOOM = 5;
+const LATENCY_THRESHOLD = 300;
 
 export function Map({ regions, latencies, location }) {
   const mapContainer = useRef(null)
@@ -24,7 +25,7 @@ export function Map({ regions, latencies, location }) {
     () =>
       new mapboxgl.GeolocateControl({
         fitBoundsOptions: {
-          maxZoom: 2,
+          maxZoom: 1.7,
         },
       }),
     [],
@@ -46,7 +47,9 @@ export function Map({ regions, latencies, location }) {
       style: 'mapbox://styles/bhavjitchauhan/cly0qsii4005201oecij7b5na',
       center: [longitude, latitude],
       zoom: DEFAULT_ZOOM,
-    })
+      minZoom: 1,
+      maxZoom: MAX_ZOOM,
+    });
     map.current.addControl(geolocate, 'bottom-left')
     map.current.on('load', () => {
       setAddedMap(true)
@@ -127,7 +130,8 @@ export function Map({ regions, latencies, location }) {
     for (const latency of latencies) {
       if (latency.latency === Infinity) continue
 
-      const color = `hsl(${range(clamp(latency.latency, 0, LATENCY_THRESHOLD), 0, LATENCY_THRESHOLD, 120, 0)}, 100%, 50%)`
+      const color = `hsl(${range(clamp(latency.latency, 0, 
+        LATENCY_THRESHOLD), 0, LATENCY_THRESHOLD, 120, 0)}, 100%, 75%)`
       const width = range(
         clamp(latency.latency, 0, LATENCY_THRESHOLD),
         0,
@@ -244,6 +248,7 @@ function clearRegionLines(regions, map) {
     } catch (err) {}
   }
 }
+
 
 /**
  * @typedef {Object} Region

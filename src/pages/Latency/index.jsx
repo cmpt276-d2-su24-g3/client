@@ -62,19 +62,18 @@ export function Latency() {
   return (
     <>
     <NavBar />
-    <div className="flex flex-row gap-4 p-4 h-dvh">
+    <div className="flex flex-row gap-4 pl-7 pt-5 h-dvh">
       <div className="flex flex-col grow">
-        <h1 className="text-3xl">Latency</h1>
-        <h2 className="xl">
-          Get live latencies to AWS data centers worldwide.
-        </h2>
-        <div className="h-full">
+      <h1 className="text-3xl text-sky-950 font-semibold pt-5">Active Data Centers - Worldwide</h1>
+      <h2 className="text-lg text-slate-500">
+        View live latency from location to AWS data centers worldwide</h2>
+        <div className="h-5/6 w-11/12">
           <Map regions={regions} latencies={latencies} location={location} />
         </div>
       </div>
-      <div className="flex flex-col gap-2 basis-2/5">
+      <div className="flex flex-col gap-3 basis-5/12 mr-6">
         <LocationInput regions={regions} setLocation={setLocation} />
-        <RegionsInput regions={regions} setRegions={setRegions} />
+        <RegionsInput regions={regions} latencies={latencies} setRegions={setRegions} />
         <LatencyTable regions={regions} latencies={latencies} />
       </div>
     </div>

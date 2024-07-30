@@ -51,6 +51,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Custom Colors
+        customPurple: '#706A88',
+        customLavender: '#A89EB3',
+        customMauve: '#9D93A8',
       },
       borderRadius: {
         lg: 'var(--radius)',
