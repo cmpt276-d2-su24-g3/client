@@ -124,10 +124,7 @@ export function LocationInput({ regions, setLocation }) {
             {websiteUrl}
           </CardTitle>
         )}
-        <div class="border-b-2 pt-3 border-dotted border-gray-300"></div>
-        <div class="font-semibold text-customPurple pt-1 text-lg"> 
-          Choose Location
-        </div>
+        <div class="border-b-2 pt-0 border-dotted border-gray-300"></div>
 
       </CardHeader>
       <CardContent>

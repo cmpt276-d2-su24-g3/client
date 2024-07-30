@@ -21,6 +21,7 @@ export function DataTable({ columns, data }) {
       id: 'latency',
       desc: false,
     },
+    
   ])
 
   const table = useReactTable({
@@ -35,7 +36,7 @@ export function DataTable({ columns, data }) {
   })
 
   return (
-    <div className="overflow-auto border rounded-md">
+    <div className="overflow-auto border mt-1 rounded-md bg-white h-40">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -59,11 +60,12 @@ export function DataTable({ columns, data }) {
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
+                className="text-customPurple"
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="text-gray-700">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

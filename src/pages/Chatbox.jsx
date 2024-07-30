@@ -1,10 +1,6 @@
-<<<<<<< Updated upstream
-import React, { useEffect, useState } from 'react';
-=======
 import { NavBar } from '@/components/NavBar'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
->>>>>>> Stashed changes
 
 export function Chatbox() {
   const [input, setInput] = useState('');

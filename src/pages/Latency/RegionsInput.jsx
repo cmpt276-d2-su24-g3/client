@@ -37,18 +37,20 @@ export function RegionsInput({ regions, setRegions, latencies }) {
 
   // Function to select the appropriate ping image based on latency
   const getPingImage = (latency) => {
-    if (latency === null) return null; // Handle null latency case
+    if (latency === null) return null; 
     
     // Define thresholds
     const thresholds = {
-      green: 50,  // Example threshold for green ping
-      orange: 150 // Example threshold for orange ping
+      green: 80,  
+      orange: 150 
     };
 
     if (latency <= thresholds.green) return GreenPing;
     if (latency <= thresholds.orange) return OrangePing;
     return RedPing;
   }
+
+  
 
   return (
     <Card>
@@ -105,7 +107,7 @@ export function RegionsInput({ regions, setRegions, latencies }) {
                   </label>
                 </div>
                 {latency !== null && (
-                  <div className="flex items-center text-sm gap-3 -mt-2 mb-3 text-customMauve ">
+                  <div className="flex items-center text-sm gap-3 -mt-2 mb-2 text-customMauve ">
                     <img
                       src={pingImage}
                       alt="Ping Indicator"

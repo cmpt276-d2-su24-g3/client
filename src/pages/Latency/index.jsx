@@ -67,7 +67,7 @@ export function Latency() {
       <h1 className="text-3xl text-sky-950 font-semibold pt-5">Active Data Centers - Worldwide</h1>
       <h2 className="text-lg text-slate-500">
         View live latency from location to AWS data centers worldwide</h2>
-        <div className="h-5/6 w-11/12">
+        <div className="h-4/5 w-11/12">
           <Map regions={regions} latencies={latencies} location={location} />
         </div>
       </div>
