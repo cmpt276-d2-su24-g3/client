@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavBar } from '@/components/NavBar'
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   Menubar,
@@ -14,6 +15,17 @@ export function Chatbot() {
   const [uuid, setUuid] = useState('');
   const [data, setData] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const existingUuid = localStorage.getItem('userUuid')
+    if (existingUuid) {
+      setUuid(existingUuid)
+    } else {
+      const newUuid = uuidv4()
+      localStorage.setItem('userUuid', newUuid)
+      setUuid(newUuid)
+    }
+  }, [])
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
@@ -31,10 +43,11 @@ export function Chatbot() {
       time: new Date().toISOString()  // ISO 8601
     };
 
-    const response = await fetch('http://zefta.catalpa.pw:8000/fake-chat', {
+    const response = await fetch('http://zefta.catalpa.pw:8000/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-API-Key': import.meta.env.VITE_CHATBOT_API_KEY,
       },
       body: JSON.stringify(requestData),
     });
@@ -107,13 +120,13 @@ export function Chatbot() {
             {loading && <span className='text-orange-500'>Processing</span>}
           </p>
           <div className='flex w-full'>
-            <input
+            {/* <input
               type="text"
               value={uuid}
               onChange={handleUuidChange}
               placeholder="Enter your UUID v4"
               className='p-2 m-2 rounded-full bg-sky-900 text-center text-white'
-            />
+            /> */}
             <div className='flex flex-1 p-2 m-2 rounded-full bg-sky-900'>
               <input
                 type="text"
