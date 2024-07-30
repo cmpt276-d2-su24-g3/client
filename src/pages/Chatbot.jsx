@@ -13,6 +13,7 @@ export function Chatbot() {
   const [input, setInput] = useState('');
   const [uuid, setUuid] = useState('');
   const [data, setData] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
@@ -44,14 +45,54 @@ export function Chatbot() {
     let text = '';
 
     while (!(chunk = await reader.read()).done) {
-      text += decoder.decode(chunk.value, { stream: true });
+      const chunkText = decoder.decode(chunk.value, { stream: true });
+      const tool_call = chunkText.includes('<|tool_call|>');
+      if (!tool_call) {
+        text += chunkText;
+      }
       setData(text);
+      setLoading(tool_call);
+    }
+
+    setLoading(false);
+  };
+
+  const handleGetHistory = async () => {
+    setData('');
+    const response = await fetch(`http://zefta.catalpa.pw:8000/get-history`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ session_id: uuid }),
+    });
+
+    if (response.status === 404) {
+      setData('History not found.');
+    } else {
+      const history = await response.json();
+      setData(JSON.stringify(history, null, 2));
     }
   };
 
-  const handleGetHistory = async () => {};
+  const handleDeleteHistory = async () => {
+    setData('');
+    const response = await fetch(`http://zefta.catalpa.pw:8000/delete-history`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ session_id: uuid }),
+    });
 
-  const handleDeleteHistory = async () => {};
+    if (response.status === 204) {
+      setData('History not found.');
+    } else if (response.status === 409) {
+      setData('Deletion not successful')
+    } else {
+      setData('History deleted successfully.');
+    }
+  };
 
   return (
     <div>
@@ -63,6 +104,7 @@ export function Chatbot() {
           </span>
           <p className='p-5 m-10 w-full h-full bg-sky-900 text-white'>
             {data}
+            {loading && <span className='text-orange-500'>Processing</span>}
           </p>
           <div className='flex w-full'>
             <input
