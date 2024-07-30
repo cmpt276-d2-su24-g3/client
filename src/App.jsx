@@ -5,7 +5,7 @@ import { Register } from './pages/Register'
 import { Latency } from './pages/Latency'
 import { Admin } from './pages/Admin'
 import { History } from './pages/History'
-import { Chatbox } from './pages/Chatbox'
+import { Chatbot } from './pages/Chatbot' 
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/history" element={<History />}/>
-          <Route path="/chatbox" element={<Chatbox />}/>
+          <Route path="/chatbot" element={<Chatbot />}/>
         </Routes>
       </BrowserRouter>
     </div>

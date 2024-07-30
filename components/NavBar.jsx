@@ -28,9 +28,9 @@ export function NavBar({ page }) {
                     Latency History
                     {page == "Latency History" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
-                <Link className="mx-5" to="/chatbox">
-                    Chatbox
-                    {page == "Chatbox" && <div className="py-1 bg-orange-500"></div>}
+                <Link className="mx-5" to="/chatbot">
+                    Chatbot
+                    {page == "Chatbot" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
             </div>
 
