@@ -46,7 +46,7 @@ export function Root() {
 
       <div className="flex justify-center mt-32 ml-20 mr-20 pb-32">
         <div className="p-5 ml-8 mt-32">
-          <span className="m-3 mt-40 text-5xl text-sky-950 font-bold font-ember">YYC Portal</span>
+          <span className="m-3 mt-40 text-5xl text-sky-950 font-bold font-ember">AWS LQ</span>
           <p className="m-4 w-96 font-sans text-customText font-ember">
             Our tools provide precise latency data for location-to-region, <span className="text-customBtn">region-to-region</span>, <span className="text-customBtn">region-to-client</span>, and <span className="text-customBtn">client-to-region</span> testing, helping
             you ensure efficient and reliable network performance.
