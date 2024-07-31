@@ -113,7 +113,7 @@ export function Chatbox() {
   return (
     <div>
       <NavBar page="Chatbox" />
-      <LoginRedirectPopup mode="authorize"/>
+      {/*<LoginRedirectPopup mode="authorize"/>*/}
       
       
       <div className="flex justify-center items-center h-screen bg-white">
@@ -134,31 +134,26 @@ export function Chatbox() {
               <p className="text-sm text-slate-500 font-ember font-medium">What are the available services at the East Canada Data Center?</p>
             </div>
           </div>
-          <p className='w-full h-40 p-5 bg-gray-50 rounded-lg shadow-inner text-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300'>
-            {data}
-            {loading && <span className='bg-slate-100 rounded-full pl-5 pr-5'>analyzing prompt</span>}
-          </p>
+          <div className="w-full h-40 p-5 bg-gray-50 rounded-lg shadow-inner text-gray-500 text-sm overflow-y-auto">
+            <p>
+              {data}
+              {loading && <span className='bg-slate-100 rounded-full pl-5 pr-5'>analyzing prompt</span>}
+            </p>
+          </div>
           <div className='flex w-full'>
-            {/* <input
-              type="text"
-              value={uuid}
-              onChange={handleUuidChange}
-              placeholder="Enter your UUID v4"
-              className='p-2 m-2 rounded-full bg-sky-900 text-center text-white'
-            /> */}
             <div className='flex items-center w-full'>
               <input
                 type="text"
                 value={input}
                 onChange={handleInputChange}
                 placeholder="Enter a prompt"
-                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-200 to-indigo-100 rounded-full w-full bg-slate-100 text-customMauve'
+                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-100 to-indigo-100 rounded-full w-full bg-slate-100 text-customMauve'
               />
               <button
                 onClick={handleButtonClick}
                 className="px-2.5 mx-2 py-3 text-white rounded-full hover:bg-purple-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
-                <img src={SendIcon} alt="Home" className="mr-2 h-5" /> 
+                <img src={SendIcon} alt="Send" className="mr-2 h-5" /> 
               </button>
             </div>
             <Menubar className='mt-2'>
