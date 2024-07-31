@@ -17,7 +17,7 @@ export function NavBar({ page }) {
                     src={AWS_Logo}
                     className="mx-5 h-5" // Adjusted size for AWS logo
                 />
-                <Link className="mx-5 flex items-center text-sm" to="/">
+                <Link className="mx-5 whitespace-nowrap flex items-center text-sm" to="/">
                     <span>YYC Portal</span>
                     {page === "YYC Portal" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
@@ -26,7 +26,7 @@ export function NavBar({ page }) {
                     <span>Dashboard</span>
                     {page === "Dashboard" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
-                <Link className="mx-5 flex items-center text-sm font-sans" to="/history">
+                <Link className="mx-5 whitespace-nowrap flex items-center text-sm font-sans" to="/history">
                     <img src={HistoryIcon} alt="History" className="mr-2 h-5" /> {/* Adjusted size for icon */}
                     <span>Latency History</span>
                     {page === "Latency History" && <div className="py-1 bg-orange-500"></div>}
@@ -36,7 +36,6 @@ export function NavBar({ page }) {
                     <span>Chatbox</span>
                     {page === "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
-                <ConditionalAdmin prop={page} />
                 <div className="flex text-black w-full justify-end">
                     <ProfileLogin prop={page} />
                 </div>
