@@ -219,6 +219,8 @@ export function Chatbox() {
   return (
     <div className="flex flex-col h-screen bg-white mt-16">
       <NavBar page="Chatbox" />
+      <LoginRedirectPopup mode="authorize"/>
+      
       
       
      
