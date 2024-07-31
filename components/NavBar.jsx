@@ -35,7 +35,7 @@ export function NavBar({ page }) {
                 <ConditionalAdmin prop={page} />
             </div>
 
-            <ProfileLogin />
+            <ProfileLogin prop={page} />
         </div>
     )
 }
