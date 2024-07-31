@@ -41,11 +41,11 @@ export function Root() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen ">
       <NavBar page="YYC Portal" />
 
-      <div className="flex justify-evenly mt-44">
-        <div className="p-5 ml-8 mt-5">
+      <div className="flex justify-center mt-32 ml-20 mr-20 pb-32">
+        <div className="p-5 ml-8 mt-32">
           <span className="m-3 mt-40 text-5xl text-sky-950 font-bold font-ember">YYC Portal</span>
           <p className="m-4 w-96 font-sans text-customText font-ember">
             Our tools provide precise latency data for location-to-region, <span className="text-customBtn">region-to-region</span>, <span className="text-customBtn">region-to-client</span>, and <span className="text-customBtn">client-to-region</span> testing, helping
@@ -58,12 +58,12 @@ export function Root() {
             <Link to="/latency">Get Started</Link>
           </button>
         </div>
-        <div className="w-full -mt-36 mr-5">
+        <div className="">
           <img src={WorldMap} alt="World Map" />
         </div>
       </div>
 
-      <div className="flex justify-center mt-16">
+      <div className="flex justify-center mt-0">
         <div className="flex justify-evenly w-3/4 p-0.5 border border-gray-500 rounded-full">
           <InfoButton
             gradientClass="bg-gradient-to-r from-violet-400 to-indigo-500" // Gradient color for selected button

@@ -6,12 +6,12 @@ import { ConditionalAdmin } from './ui/conditionalAdmin'
 
 export function NavBar({ page }) {
     return (
-        <div className="flex justify-between py-4 bg-sky-950 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.2),0_2px_4px_-2px_rgba(255,255,255,0.8)]">
+        <div className="flex justify-between py-3 bg-sky-950 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.2),0_2px_4px_-2px_rgba(255,255,255,0.8)]">
             <div className="flex text-sm text-white items-center">
                 <img
                     alt="AWS"
                     src={AWS_Logo}
-                    className="mx-5 h-6" // Adjusted size for AWS logo
+                    className="mx-5 h-5" // Adjusted size for AWS logo
                 />
                 <Link className="mx-5 flex items-center text-sm" to="/">
                     <span>YYC Portal</span>

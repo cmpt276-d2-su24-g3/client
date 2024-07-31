@@ -55,7 +55,7 @@ export function RegionsInput({ regions, setRegions, latencies }) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between pt-3">
+        <div className="flex justify-between h-4/5 pt-3">
           <div>
             <CardTitle>Regions</CardTitle>
             <CardDescription>

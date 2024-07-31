@@ -116,13 +116,15 @@ export function History({ startFromLatency, destinationFromLatency }) {
       <NavBar page="Latency History" />
       <div className="flex justify-center min-h-screen py-8 bg-sky-100">
         <div className="flex flex-col w-11/12">
-          <Link to="/latency" className="m-2"><ArrowLeft /></Link>
-          <span className="text-2xl font-bold">
+        <div className="flex flex-row">
+          <Link to="/latency" className="m-1 bg-white p-2 text-customPurple rounded-full"><ArrowLeft /></Link>   
+          <span className="text-2xl font-bold pt-2 pl-2 text-customText">
             Historical Latency - Worldwide
-          </span>
+          </span></div>
           <span className="text-gray-400">
             View historical latency from location to AWS data centers worldwide
           </span>
+        
           <div className="flex my-4 bg-white rounded-lg">
             <div className="w-1/2">
               <LinearChart pings={pings} startingLocation={startingLocation} destination={destination}/>

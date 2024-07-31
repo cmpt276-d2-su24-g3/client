@@ -36,7 +36,7 @@ export function DataTable({ columns, data }) {
   })
 
   return (
-    <div className="overflow-auto border mt-1 rounded-md bg-white h-40">
+    <div className="overflow-auto border rounded-md bg-white h-1/5">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
