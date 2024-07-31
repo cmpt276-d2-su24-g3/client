@@ -1,52 +1,152 @@
-import React, { useEffect, useState } from 'react';
-import { NavBar } from '@/components/NavBar'
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { NavBar } from '@/components/NavBar';
 import { v4 as uuidv4 } from 'uuid';
-import SendIcon from '@/src/assets/send-icon.svg'
+import SendIcon from '@/src/assets/send-icon.svg';
 import { LoginRedirectPopup } from '@/components/LoginRedirectPopup';
-
 import {
   Menubar,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
   MenubarTrigger,
-} from "@/components/ui/menubar"
+} from "@/components/ui/menubar";
+
+const ChatConversations = ({ conversations, chatConversationsContainerRef }) => {
+  useEffect(() => {
+    const chatConversationsContainer = chatConversationsContainerRef?.current;
+    if (chatConversationsContainer) {
+      chatConversationsContainer.scrollTo(0, chatConversationsContainer.scrollHeight);
+    }
+  }, [conversations]);
+
+  return (
+    <div className="w-full">
+      {conversations && conversations.map((chatEntry, index) => (
+        <ChatMessage key={`chatbot-message-${index}`} message={chatEntry} />
+      ))}
+    </div>
+  );
+};
+
+const ChatInput = ({ disabled, onSubmit, placeholder, customSubmitIcon }) => {
+  const textAreaRef = useRef(null);
+
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      const textArea = textAreaRef?.current;
+      if (textArea && textArea.value.trim().length > 0) {
+        if (onSubmit) {
+          onSubmit(textArea.value);
+        }
+        textArea.value = "";
+      }
+    },
+    [onSubmit]
+  );
+
+  const handleEnterKey = useCallback(
+    (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        handleSubmit(e);
+      }
+    },
+    [handleSubmit]
+  );
+
+  return (
+    <div className="flex justify-center items-center w-full">
+      <textarea
+        ref={textAreaRef}
+        className="pl-8 pr-15 pt-4 mb-4 pb-0 bg-gradient-to-br from-slate-100 to-indigo-100 rounded-full w-3/5"
+        onKeyUp={handleEnterKey}
+        placeholder={placeholder ? placeholder : "Type here to chat"}
+        disabled={disabled}
+      ></textarea>
+      <button
+        disabled={disabled}
+        onClick={handleSubmit}
+        className="px-2.5 mx-2 py-3 text-white rounded-full hover:bg-indigo-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+      >
+        {customSubmitIcon ? customSubmitIcon : <img src={SendIcon} alt="Send" className="h-5" />}
+      </button>
+    </div>
+  );
+};
+
+const ChatMessage = ({ message }) => {
+  const isBot = message.type !== 'human';
+
+  return (
+    <div className="mt-4  mr-52 ml-52 flex">
+      <div className="bg-neutral text-neutral-content h-10 w-10 rounded-full flex items-center justify-center mr-4">
+        {isBot ? '🤖' : '👤'}
+      </div>
+      <div className="flex flex-col">
+        <h4 className="font-semibold select-none">{isBot ? "LQ AI" : "You"}</h4>
+        <p>{message.content}</p>
+      </div>
+    </div>
+  );
+};
 
 export function Chatbox() {
   const [input, setInput] = useState('');
   const [uuid, setUuid] = useState('');
-  const [data, setData] = useState('');
+  const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState({ username: ''})
+  const chatConversationsContainerRef = useRef(null);
 
   useEffect(() => {
-    const existingUuid = localStorage.getItem('userUuid')
-    if (existingUuid) {
-      setUuid(existingUuid)
-    } else {
-      const newUuid = uuidv4()
-      localStorage.setItem('userUuid', newUuid)
-      setUuid(newUuid)
+    const initializeUuid = () => {
+      const existingUuid = localStorage.getItem('userUuid');
+      if (existingUuid) {
+        setUuid(existingUuid);
+      } else {
+        const newUuid = uuidv4();
+        localStorage.setItem('userUuid', newUuid);
+        setUuid(newUuid);
+      }
+    };
+    initializeUuid();
+  }, []);
+
+  useEffect(() => {
+    if (uuid) {
+      fetchHistory();
     }
-  }, [])
+  }, [uuid]);
+
+  const fetchHistory = async () => {
+    const response = await fetch(`https://zefta.catalpa.pw:8000/get-history`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': import.meta.env.VITE_CHATBOT_API_KEY,
+      },
+      body: JSON.stringify({ session_id: uuid }),
+    });
+
+    if (response.status === 200) {
+      const history = await response.json();
+      const filteredHistory = history.filter(entry => entry.type !== 'tool');
+      setConversations(filteredHistory);
+    }
+  };
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
   };
 
-  const handleUuidChange = (event) => {
-    setUuid(event.target.value);
-  };
-
-  const handleButtonClick = async () => {
-    setData('');
+  const handleButtonClick = async (message) => {
+    setLoading(true);
     const requestData = {
-      input: input,
-      session_id: uuid,  // UUID v4
-      time: new Date().toISOString()  // ISO 8601
+      input: message,
+      session_id: uuid,
+      time: new Date().toISOString()
     };
 
-    const response = await fetch('http://zefta.catalpa.pw:8000/chat', {
+    const response = await fetch('https://zefta.catalpa.pw:8000/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,117 +159,102 @@ export function Chatbox() {
     const decoder = new TextDecoder();
     let chunk;
     let text = '';
+    const newConvoId = uuidv4();
+    const newBotConvo = { id: newConvoId, type: 'AIMessageChunk', content: '' };
+    setConversations(prev => [...prev, { id: uuidv4(), type: 'human', content: message }, newBotConvo]);
+
+    let analyzingMessageAdded = false;
 
     while (!(chunk = await reader.read()).done) {
       const chunkText = decoder.decode(chunk.value, { stream: true });
-      const tool_call = chunkText.includes('<|tool_call|>');
-      if (!tool_call) {
+      if (chunkText === '<|tool_call|>') {
+        if (!analyzingMessageAdded) {
+          text += '\nAnalyzing...\n';
+          analyzingMessageAdded = true;
+        }
+      } else {
+        if (analyzingMessageAdded) {
+          text = text.replace('\nAnalyzing...\n', '');
+          analyzingMessageAdded = false;
+        }
         text += chunkText;
       }
-      setData(text);
-      setLoading(tool_call);
+      setConversations(prev =>
+        prev.map(convo =>
+          convo.id === newConvoId ? { ...convo, content: text } : convo
+        )
+      );
     }
 
     setLoading(false);
   };
 
-  const handleGetHistory = async () => {
-    setData('');
-    const response = await fetch(`http://zefta.catalpa.pw:8000/get-history`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ session_id: uuid }),
-    });
-
-    if (response.status === 404) {
-      setData('History not found.');
-    } else {
-      const history = await response.json();
-      setData(JSON.stringify(history, null, 2));
-    }
-  };
-
   const handleDeleteHistory = async () => {
-    setData('');
-    const response = await fetch(`http://zefta.catalpa.pw:8000/delete-history`, {
+    setLoading(true);
+    const response = await fetch(`https://zefta.catalpa.pw:8000/delete-history`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-API-Key': import.meta.env.VITE_CHATBOT_API_KEY,
       },
       body: JSON.stringify({ session_id: uuid }),
     });
 
-    if (response.status === 204) {
-      setData('History not found.');
-    } else if (response.status === 409) {
-      setData('Deletion not successful')
+    if (response.status === 409) {
+      setConversations([{ id: uuidv4(), type: 'AIMessageChunk', content: 'Deletion not successful' }]);
     } else {
-      setData('History deleted successfully.');
+      setConversations([]);
     }
+    setLoading(false);
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-screen bg-white mt-16">
       <NavBar page="Chatbox" />
-      *<LoginRedirectPopup mode="authorize"/>*
+     
       
-      
-      <div className="flex justify-center mt-16 items-center h-screen bg-white">
-        <div className='flex flex-col justify-between items-center w-2/3 h-4/5'>
-        <h1 className="text-4xl font-bold bg-gradient-to-br from-indigo-700 to-blue-400 text-transparent bg-clip-text mb-2">Welcome to AWS LQ AI</h1>
-        <h2 className="text-lg text-semibold font-ember text-customPurple mb-2">How can I help you today?</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-6">
-            <div className="p-10 bg-slate-100 hover:bg-gradient-to-br from-indigo-100 to-white-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer text-center">
-              <p className="text-sm text-slate-500 font-ember font-medium">What region will provide the optimal latency to Vancouver?</p>
+      <div className='flex flex-col justify-between items-center w-full h-full p-4'>
+        {conversations.length === 0 ? (
+          <>
+            <h1 className="text-4xl font-bold bg-gradient-to-br from-indigo-700 to-blue-400 text-transparent bg-clip-text mt-48">Welcome to AWS LQ AI</h1>
+            <h2 className="text-lg text-semibold font-ember text-customPurple -mt-12">How can I help you today?</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 w-3/5 mb-6 -mt-10 ml-20 mr-20 ">
+              <div className="p-10 bg-slate-100 hover:bg-gradient-to-br from-indigo-100 to-white-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer text-center">
+                <p className="text-sm text-slate-500 font-ember font-medium">What region will provide the optimal latency to AWS Origon?</p>
+              </div>
+              <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:bg-gradient-to-br from-indigo-100 to-white-100 text-center">
+                <p className="text-sm text-slate-500 font-ember font-medium">What is the live ping between ca-central-1 and ap-south-2?</p>
+              </div>
+              <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg transition-shadow hover:bg-gradient-to-br from-indigo-100 to-white-100 duration-300 cursor-pointer text-center">
+                <p className="text-sm text-slate-500 font-ember font-medium">What was the latency between Ohio and Mumbai last Sunday?</p>
+              </div>
+              <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg hover:bg-gradient-to-br from-indigo-100 to-white-100 transition-shadow duration-300 cursor-pointer text-center">
+                <p className="text-sm text-slate-500 font-ember font-medium">What are the available services at the East Canada Data Center?</p>
+              </div>
             </div>
-            <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:bg-gradient-to-br from-indigo-100 to-white-100 text-center">
-              <p className="text-sm text-slate-500 font-ember font-medium">What is the live ping between ca-central-1 and ap-south-2?</p>
-            </div>
-            <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg transition-shadow hover:bg-gradient-to-br from-indigo-100 to-white-100 duration-300 cursor-pointer text-center">
-              <p className="text-sm text-slate-500 font-ember font-medium">What was the latency between Ohio and Mumbai last Sunday?</p>
-            </div>
-            <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg hover:bg-gradient-to-br from-indigo-100 to-white-100 transition-shadow duration-300 cursor-pointer text-center">
-              <p className="text-sm text-slate-500 font-ember font-medium">What are the available services at the East Canada Data Center?</p>
-            </div>
+          </>
+        ) : (
+          <div ref={chatConversationsContainerRef} className="flex-grow w-full overflow-y-auto">
+            <ChatConversations conversations={conversations} chatConversationsContainerRef={chatConversationsContainerRef} />
           </div>
-          <div className="w-full h-40 p-5 bg-gray-50 rounded-lg shadow-inner text-gray-500 text-sm overflow-y-auto">
-            <p>
-              {data}
-              {loading && <span className='bg-slate-100 rounded-full pl-5 pr-5'>analyzing prompt</span>}
-            </p>
-          </div>
-          <div className='flex w-full'>
-            <div className='flex items-center w-full'>
-              <input
-                type="text"
-                value={input}
-                onChange={handleInputChange}
-                placeholder="Enter a prompt here"
-                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-100 to-indigo-100 rounded-full w-full'
-              />
-              <button
-                onClick={handleButtonClick}
-                className="px-2.5 mx-2 py-3 text-white rounded-full hover:bg-indigo-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              >
-                <img src={SendIcon} alt="Send" className="mr-2 h-5" /> 
-              </button>
-            </div>
-            <Menubar className='mt-2'>
-              <MenubarMenu>
-                <MenubarTrigger>...</MenubarTrigger>
-                <MenubarContent>
-                  <MenubarItem>
-                    <button onClick={handleGetHistory}>Get History</button>
-                  </MenubarItem>
-                  <MenubarItem>
-                    <button onClick={handleDeleteHistory}>Delete History</button>
-                  </MenubarItem>
-                </MenubarContent>
-              </MenubarMenu>
-            </Menubar>
-          </div>
+        )}
+        <div className='w-full mt-2'>
+          <ChatInput
+            disabled={loading}
+            onSubmit={handleButtonClick}
+            placeholder="Enter a prompt"
+            customSubmitIcon={<img src={SendIcon} alt="Send" className="mr-1  mb-2 ml-1 h-6" />}
+          />
+          <Menubar className='mt-2'>
+            <MenubarMenu>
+              <MenubarTrigger>...</MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem>
+                  <button onClick={handleDeleteHistory}>Delete History</button>
+                </MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
         </div>
       </div>
     </div>
