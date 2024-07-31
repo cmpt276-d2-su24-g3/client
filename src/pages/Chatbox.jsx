@@ -113,13 +113,13 @@ export function Chatbox() {
   return (
     <div>
       <NavBar page="Chatbox" />
-      {/*<LoginRedirectPopup mode="authorize"/>*/}
+      *<LoginRedirectPopup mode="authorize"/>*
       
       
-      <div className="flex justify-center items-center h-screen bg-white">
+      <div className="flex justify-center mt-16 items-center h-screen bg-white">
         <div className='flex flex-col justify-between items-center w-2/3 h-4/5'>
         <h1 className="text-4xl font-bold bg-gradient-to-br from-indigo-700 to-blue-400 text-transparent bg-clip-text mb-2">Welcome to AWS LQ AI</h1>
-        <h2 className="text-lg text-semibold font-ember text-customPurple mb-6">How can I help you today?</h2>
+        <h2 className="text-lg text-semibold font-ember text-customPurple mb-2">How can I help you today?</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-6">
             <div className="p-10 bg-slate-100 hover:bg-gradient-to-br from-indigo-100 to-white-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer text-center">
               <p className="text-sm text-slate-500 font-ember font-medium">What region will provide the optimal latency to Vancouver?</p>
@@ -146,12 +146,12 @@ export function Chatbox() {
                 type="text"
                 value={input}
                 onChange={handleInputChange}
-                placeholder="Enter a prompt"
-                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-100 to-indigo-100 rounded-full w-full bg-slate-100 text-customMauve'
+                placeholder="Enter a prompt here"
+                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-100 to-indigo-100 rounded-full w-full'
               />
               <button
                 onClick={handleButtonClick}
-                className="px-2.5 mx-2 py-3 text-white rounded-full hover:bg-purple-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="px-2.5 mx-2 py-3 text-white rounded-full hover:bg-indigo-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 <img src={SendIcon} alt="Send" className="mr-2 h-5" /> 
               </button>

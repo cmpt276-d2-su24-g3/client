@@ -122,7 +122,7 @@ export function History({ startFromLatency, destinationFromLatency }) {
   }
   return (
     <div>
-      <div className="px-0 "></div>
+      <div className="px-0 mt-16"></div>
       <NavBar page="Latency History" />
       <div className="flex justify-center min-h-screen py-10 bg-customBg">
         <div className="flex flex-col w-full ml-8 mr-5">

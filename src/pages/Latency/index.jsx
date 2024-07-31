@@ -62,7 +62,7 @@ export function Latency() {
   return (
     <>
     <NavBar />
-    <div className="flex flex-row gap-4 pl-7 pt-5 h-dvh">
+    <div className="flex flex-row gap-4 pl-7 pt-5 mt-16 h-dvh">
       <div className="flex flex-col grow">
       <h1 className="text-3xl text-sky-950 font-semibold pt-5">Active Data Centers - Worldwide</h1>
       <h2 className="text-lg text-slate-500">
