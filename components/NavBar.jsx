@@ -6,7 +6,7 @@ import { ConditionalAdmin } from './ui/conditionalAdmin'
 
 export function NavBar({ page }) {
     return (
-        <div className="flex justify-between py-4 bg-sky-950 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.2),0_2px_4px_-2px_rgba(255,255,255,0.8)]">
+        <div className=" z-20 relative justify-between py-4 bg-sky-950 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.2),0_2px_4px_-2px_rgba(255,255,255,0.8)]">
             <div className="flex text-sm text-white items-center">
                 <img
                     alt="AWS"
@@ -33,9 +33,11 @@ export function NavBar({ page }) {
                     {page === "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
                 <ConditionalAdmin prop={page} />
+                <div className="flex text-black w-full justify-end">
+                    <ProfileLogin prop={page} />
+                </div>
             </div>
-
-            <ProfileLogin prop={page} />
+            
         </div>
     )
 }
