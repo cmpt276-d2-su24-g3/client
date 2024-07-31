@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavBar } from '@/components/NavBar';
 
-import WorldMap from '../assets/world-map.svg';
-import R2R from '../assets/r2r-image.svg';
+import WorldMap from '../assets/world-map.svg'
+import C2R_Image from '../assets/c2r-image.svg'
+import R2R_Image from '../assets/r2r-image.svg'
+import R2C_Image from '../assets/r2c-image.svg'
+import Chatbox_Image from '../assets/chatbot-image.svg'
 
 import '../assets/fonts.css';
 
@@ -29,15 +32,15 @@ export function Root() {
 
   // Information corresponding to each option
   const infoContent = {
-    "Amazon LQ": `Amazon LQ brings its advanced generative AI technology to Amazon QuickSight,
-    the AWS unified business intelligence (BI) service built for the cloud.
-    .`,
-    "Client to Region": `This tool provides latency data for Client to Region communication,
-    ensuring minimal delay and optimized performance for user-to-data-center interactions.`,
-    "Region to Region": `Analyze the latency between AWS regions, helping you design
-    efficient multi-region applications and improve cross-region network performance.`,
-    "Region to Client": `Get detailed insights into the network performance from AWS regions to clients,
-    helping you maintain reliable connectivity and fast data delivery.`,
+    "Amazon LQ": `Amazon LQ is a streamlined tool for querying latency information.
+    Users are provided with several services that provide latency times between different locations.`,
+    "Client to Region": `By selecting AWS regions, our system displays latency times from those regions directly to your location.`,
+    "Region to Region": `View latency times and latency history between any two regions.
+    Change region locations at any time and with ease.`,
+    "Region to Client": `Users can view latency times not only from their location,
+    but from any location by providing a URL. Latencies from unique locations can connect to any region.`,
+    "AI Chatbot": `Interact with a friendly chat bot that provides information about several AWS services.
+    Furthermore, the chat bot allows users to view and delete chat history.`
   };
 
   return (
@@ -46,7 +49,7 @@ export function Root() {
 
       <div className="flex justify-center mt-32 ml-20 mr-20 pb-32">
         <div className="p-5 ml-8 mt-32">
-          <span className="m-3 mt-40 text-5xl text-sky-950 font-bold font-ember">AWS LQ</span>
+          <span className="m-3 mt-40 text-5xl text-sky-950 font-bold font-ember">YYC Portal</span>
           <p className="m-4 w-96 font-sans text-customText font-ember">
             Our tools provide precise latency data for location-to-region, <span className="text-customBtn">region-to-region</span>, <span className="text-customBtn">region-to-client</span>, and <span className="text-customBtn">client-to-region</span> testing, helping
             you ensure efficient and reliable network performance.
@@ -58,9 +61,8 @@ export function Root() {
             <Link to="/latency">Get Started</Link>
           </button>
         </div>
-        <div className="">
-          <img src={WorldMap} alt="World Map" />
-        </div>
+        <img src={WorldMap} alt="World Map" className='w-2/3'/>
+          
       </div>
 
       <div className="flex justify-center mt-0">
@@ -100,17 +102,23 @@ export function Root() {
 
       <div className="flex justify-center mt-32 ml-20 mr-20 pb-32">
         <div>
-        <span className='text-3xl font-bold font-ember text-sky-950'>{infoHighlighted}</span>
-        <p className="font-ember pt-8 w-3/4 text-gray-600">
-        
+          <span className='text-3xl font-bold font-ember text-sky-950'>{infoHighlighted}</span>
+          <p className="pt-8 w-3/4 text-gray-600">  
             {infoContent[infoHighlighted]} {/* Display the content based on the selected option */}
           </p>
         </div>
         <div>
-          <img src={R2R} alt="R2R Diagram" />
+          <img className='h-64' src={
+            infoHighlighted == "Amazon LQ" ? R2C_Image
+              : infoHighlighted == "Client to Region" ? C2R_Image
+              : infoHighlighted == "Region to Region" ? R2R_Image
+              : infoHighlighted == "Region to Client" ? R2C_Image
+              : infoHighlighted == "AI Chatbot" ? Chatbox_Image
+              : Chatbox_Image
+          }
+          ></img>
         </div>
       </div>
-
     </div>
   );
 }
