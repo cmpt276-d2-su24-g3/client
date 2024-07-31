@@ -33,7 +33,7 @@ export function NavBar({ page }) {
                 </Link>
                 <Link className="mx-5 flex items-center font-sans text-sm" to="/chatbox">
                     <img src={ChatboxIcon} alt="Chatbox" className="mr-2 h-5" /> {/* Adjusted size for icon */}
-                    <span>Chatbox</span>
+                    <span>Chatbot</span>
                     {page === "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
                 <div className="flex text-black w-full justify-end">
