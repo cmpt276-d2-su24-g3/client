@@ -1,5 +1,6 @@
 import { NavBar } from '@/components/NavBar'
 import { useEffect, useState } from 'react'
+import { LoginRedirectPopup } from '@/components/LoginRedirectPopup';
 import axios from 'axios'
 
 export function Chatbox() {
@@ -45,6 +46,7 @@ export function Chatbox() {
 
   return (
     <div>
+      <NavBar page="Chatbot" />
       <h1>Streamed Data</h1>
       <input
         type="text"
@@ -60,6 +62,7 @@ export function Chatbox() {
       />
       <button onClick={handleButtonClick}>Send</button>
       <pre>{data}</pre>
+      <LoginRedirectPopup mode="authorize" />
     </div>
   );
 }

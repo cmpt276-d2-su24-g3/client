@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Component as LinearChart } from '@/components/ui/linearchart'
+import { isAdmin } from '@/lib/utils'
+import { LoginRedirectPopup } from '@/components/LoginRedirectPopup'
 import {
   Table,
   TableBody,
@@ -110,7 +112,9 @@ export function History({ startFromLatency, destinationFromLatency }) {
     const index = Math.floor((percentile / 100) * sortedLatencies.length)
     return Math.round(sortedLatencies[index]) + ' ms'
   }
-
+  if(isAdmin()) {
+    
+  }
   return (
     <div>
       <NavBar page="Latency History" />
@@ -222,6 +226,7 @@ export function History({ startFromLatency, destinationFromLatency }) {
           </div>
         </div>
       </div>
+      <LoginRedirectPopup mode="admin" />
     </div>
   )
 }
