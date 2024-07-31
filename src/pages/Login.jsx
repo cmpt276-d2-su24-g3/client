@@ -15,7 +15,7 @@ export function Login() {
             const data = {
                 grant_type: 'authorization_code',
                 client_id: '481g1a0ridauh779f34tvsti05',
-                redirect_uri: 'https://dd06gmwf4nvya.cloudfront.net/login',
+                redirect_uri: 'https://cmpt276.bhavjit.com/login',
                 code: code
             };
 
