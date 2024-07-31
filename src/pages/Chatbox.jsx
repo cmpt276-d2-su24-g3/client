@@ -176,7 +176,7 @@ export function Chatbox() {
 
         while (!(chunk = await reader.read()).done) {
             const chunkText = decoder.decode(chunk.value, { stream: true });
-            if (chunkText === '<|tool_call|>') {
+            if (chunkText === '<|tool_call|>' || chunkText === '<|message_received|>') {
                 if (!analyzingMessageAdded) {
                     text += '\nAnalyzing...\n';
                     analyzingMessageAdded = true;
