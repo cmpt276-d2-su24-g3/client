@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { v4 as uuidv4 } from 'uuid';
 import SendIcon from '@/src/assets/send-icon.svg';
+import ChatIcon from '@/src/assets/chatbot-icon.svg';
 import { LoginRedirectPopup } from '@/components/LoginRedirectPopup';
 import {
   Menubar,
@@ -78,16 +79,23 @@ const ChatMessage = ({ message }) => {
   const isBot = message.type !== 'human';
 
   return (
-    <div className="mt-4  mr-52 ml-52 flex">
-      <div className="bg-neutral text-neutral-content h-10 w-10 rounded-full flex items-center justify-center mr-4">
-        {isBot ? '🤖' : '👤'}
-      </div>
-      <div className="flex flex-col">
-        <h4 className="font-semibold select-none">{isBot ? "LQ AI" : "You"}</h4>
-        <p>{message.content}</p>
-      </div>
+    <div className="mt-4 mr-52 ml-52 flex">
+    <div className="bg-neutral text-neutral-content h-10 w-10 rounded-full flex items-center justify-center mr-4">
+  {isBot ? (
+    <img
+      src={ChatIcon}
+      alt="AI-Chatbot"
+      className="h-10 "
+    />
+  ) : ''}
+</div>
+
+    <div className="flex flex-col">
+      <h4 className="font-semibold select-none">{isBot ? "LQ AI" : ""}</h4>
+      <p className={isBot ? "bg-white font-ember text-sky-950" : "font-ember bg-gradient-to-br text- from-purple-100 to-indigo-300 rounded-full pl-5 pr-5 pt-2 pb-2 m-2"}>{message.content}</p>
     </div>
-  );
+  </div>
+);
 };
 
 export function Chatbox() {
@@ -211,6 +219,8 @@ export function Chatbox() {
   return (
     <div className="flex flex-col h-screen bg-white mt-16">
       <NavBar page="Chatbox" />
+      
+      
      
       
       <div className='flex flex-col justify-between items-center w-full h-full p-4'>
