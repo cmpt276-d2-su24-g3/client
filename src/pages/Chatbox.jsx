@@ -114,9 +114,11 @@ export function Chatbox() {
     <div>
       <NavBar page="Chatbox" />
       <LoginRedirectPopup mode="authorize"/>
+      
+      
       <div className="flex justify-center items-center h-screen bg-white">
         <div className='flex flex-col justify-between items-center w-2/3 h-4/5'>
-        <h1 className="text-4xl font-bold bg-gradient-to-br from-indigo-500 to-white text-transparent bg-clip-text mb-2">Welcome to AWS LQ AI</h1>
+        <h1 className="text-4xl font-bold bg-gradient-to-br from-indigo-700 to-blue-400 text-transparent bg-clip-text mb-2">Welcome to AWS LQ AI</h1>
         <h2 className="text-lg text-semibold font-ember text-customPurple mb-6">How can I help you today?</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-6">
             <div className="p-10 bg-slate-100 hover:bg-gradient-to-br from-indigo-100 to-white-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer text-center">
@@ -132,7 +134,7 @@ export function Chatbox() {
               <p className="text-sm text-slate-500 font-ember font-medium">What are the available services at the East Canada Data Center?</p>
             </div>
           </div>
-          <p className='w-full h-40 p-4 bg-gray-50 rounded-lg shadow-inner text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300'>
+          <p className='w-full h-40 p-5 bg-gray-50 rounded-lg shadow-inner text-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300'>
             {data}
             {loading && <span className='bg-slate-100 rounded-full pl-5 pr-5'>analyzing prompt</span>}
           </p>
@@ -150,7 +152,7 @@ export function Chatbox() {
                 value={input}
                 onChange={handleInputChange}
                 placeholder="Enter a prompt"
-                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-100 to-indigo-50 rounded-full w-full bg-slate-100 text-customMauve'
+                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-200 to-indigo-100 rounded-full w-full bg-slate-100 text-customMauve'
               />
               <button
                 onClick={handleButtonClick}
