@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavBar } from '@/components/NavBar'
 import { v4 as uuidv4 } from 'uuid';
+import SendIcon from '@/src/assets/send-icon.svg'
 
 import {
   Menubar,
@@ -15,6 +16,7 @@ export function Chatbox() {
   const [uuid, setUuid] = useState('');
   const [data, setData] = useState('');
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState({ username: ''})
 
   useEffect(() => {
     const existingUuid = localStorage.getItem('userUuid')
@@ -110,14 +112,27 @@ export function Chatbox() {
   return (
     <div>
       <NavBar page="Chatbox" />
-      <div className="flex justify-center items-center h-screen bg-sky-950">
+      <div className="flex justify-center items-center h-screen bg-white">
         <div className='flex flex-col justify-between items-center w-2/3 h-4/5'>
-          <span className="text-6xl font-bold text-sky-500">
-              Chatbot
-          </span>
-          <p className='p-5 m-10 w-full h-full bg-sky-900 text-white'>
+        <h1 className="text-4xl font-bold bg-gradient-to-br from-indigo-500 to-white text-transparent bg-clip-text mb-2">Welcome to AWS LQ AI</h1>
+        <h2 className="text-lg text-semibold font-ember text-customPurple mb-6">How can I help you today?</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-6">
+            <div className="p-10 bg-slate-100 hover:bg-gradient-to-br from-indigo-100 to-white-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer text-center">
+              <p className="text-sm text-slate-500 font-ember font-medium">What region will provide the optimal latency to Vancouver?</p>
+            </div>
+            <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:bg-gradient-to-br from-indigo-100 to-white-100 text-center">
+              <p className="text-sm text-slate-500 font-ember font-medium">What is the live ping between ca-central-1 and ap-south-2?</p>
+            </div>
+            <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg transition-shadow hover:bg-gradient-to-br from-indigo-100 to-white-100 duration-300 cursor-pointer text-center">
+              <p className="text-sm text-slate-500 font-ember font-medium">What was the latency between Ohio and Mumbai last Sunday?</p>
+            </div>
+            <div className="p-10 bg-slate-100 rounded-lg hover:shadow-lg hover:bg-gradient-to-br from-indigo-100 to-white-100 transition-shadow duration-300 cursor-pointer text-center">
+              <p className="text-sm text-slate-500 font-ember font-medium">What are the available services at the East Canada Data Center?</p>
+            </div>
+          </div>
+          <p className='w-full h-40 p-4 bg-gray-50 rounded-lg shadow-inner text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300'>
             {data}
-            {loading && <span className='text-orange-500'>Processing</span>}
+            {loading && <span className='bg-slate-100 rounded-full pl-5 pr-5'>analyzing prompt</span>}
           </p>
           <div className='flex w-full'>
             {/* <input
@@ -127,15 +142,20 @@ export function Chatbox() {
               placeholder="Enter your UUID v4"
               className='p-2 m-2 rounded-full bg-sky-900 text-center text-white'
             /> */}
-            <div className='flex flex-1 p-2 m-2 rounded-full bg-sky-900'>
+            <div className='flex items-center w-full'>
               <input
                 type="text"
                 value={input}
                 onChange={handleInputChange}
-                placeholder="Enter your input"
-                className='pl-4 w-3/4 bg-transparent text-white'
+                placeholder="Enter a prompt"
+                className='pl-8 pr-15 pt-4 pb-4 bg-gradient-to-br from-slate-100 to-indigo-50 rounded-full w-full bg-slate-100 text-customMauve'
               />
-              <button className='flex-1 text-white' onClick={handleButtonClick}>Send</button>
+              <button
+                onClick={handleButtonClick}
+                className="px-2.5 mx-2 py-3 text-white rounded-full hover:bg-purple-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
+                <img src={SendIcon} alt="Home" className="mr-2 h-5" /> 
+              </button>
             </div>
             <Menubar className='mt-2'>
               <MenubarMenu>
