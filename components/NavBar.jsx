@@ -4,6 +4,10 @@ import AWS_Logo from "@/AWS_Logo.png"
 import { ProfileLogin } from './ui/ProfileLogin'
 import { ConditionalAdmin } from './ui/conditionalAdmin'
 
+import ChatboxIcon from "@/src/assets/ai-icon.svg"
+import HistoryIcon from "@/src/assets/history-icon.svg"
+import HomeIcon from "@/src/assets/home-icon.svg"
+
 export function NavBar({ page }) {
     return (
         <div className="flex justify-between py-3 bg-sky-950 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.2),0_2px_4px_-2px_rgba(255,255,255,0.8)]">
@@ -18,17 +22,17 @@ export function NavBar({ page }) {
                     {page === "YYC Portal" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
                 <Link className="mx-5 flex items-center font-sans text-sm" to="/latency">
-                    <img src="src/assets/home-icon.svg" alt="Home" className="mr-2 h-5" /> {/* Adjusted size for icon */}
+                    <img src={HomeIcon} alt="Home" className="mr-2 h-5" /> {/* Adjusted size for icon */}
                     <span>Dashboard</span>
                     {page === "Dashboard" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
                 <Link className="mx-5 flex items-center text-sm font-sans" to="/history">
-                    <img src="src/assets/history-icon.svg" alt="History" className="mr-2 h-5" /> {/* Adjusted size for icon */}
+                    <img src={HistoryIcon} alt="History" className="mr-2 h-5" /> {/* Adjusted size for icon */}
                     <span>Latency History</span>
                     {page === "Latency History" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
                 <Link className="mx-5 flex items-center font-sans text-sm" to="/chatbox">
-                    <img src="src/assets/ai-icon.svg" alt="Chatbox" className="mr-2 h-5" /> {/* Adjusted size for icon */}
+                    <img src={ChatboxIcon} alt="Chatbox" className="mr-2 h-5" /> {/* Adjusted size for icon */}
                     <span>Chatbox</span>
                     {page === "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
