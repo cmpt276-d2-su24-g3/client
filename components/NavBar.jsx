@@ -36,7 +36,6 @@ export function NavBar({ page }) {
                     <span>Chatbox</span>
                     {page === "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
-                <ConditionalAdmin prop={page} />
                 <div className="flex text-black w-full justify-end">
                     <ProfileLogin prop={page} />
                 </div>
