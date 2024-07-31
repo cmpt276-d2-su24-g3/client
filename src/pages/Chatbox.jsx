@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavBar } from '@/components/NavBar'
 import { v4 as uuidv4 } from 'uuid';
 import SendIcon from '@/src/assets/send-icon.svg'
+import { LoginRedirectPopup } from '@/components/LoginRedirectPopup';
 
 import {
   Menubar,
@@ -112,6 +113,7 @@ export function Chatbox() {
   return (
     <div>
       <NavBar page="Chatbox" />
+      <LoginRedirectPopup mode="authorize"/>
       <div className="flex justify-center items-center h-screen bg-white">
         <div className='flex flex-col justify-between items-center w-2/3 h-4/5'>
         <h1 className="text-4xl font-bold bg-gradient-to-br from-indigo-500 to-white text-transparent bg-clip-text mb-2">Welcome to AWS LQ AI</h1>
