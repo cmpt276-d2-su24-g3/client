@@ -8,8 +8,16 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Component as LinearChart } from '@/components/ui/linearchart'
+<<<<<<< Updated upstream
 import { isAdmin } from '@/lib/utils'
 import { LoginRedirectPopup } from '@/components/LoginRedirectPopup'
+=======
+import RedPing from '@/src/assets/red-ping.svg';
+import OrangePing from '@/src/assets/orange-ping.svg';
+import GreenPing from '@/src/assets/green-ping.svg';
+
+
+>>>>>>> Stashed changes
 import {
   Table,
   TableBody,
@@ -19,14 +27,35 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-const InfoBlock = ({ type, latency }) => {
-  return (
-    <div className="flex flex-col items-center justify-center border">
-      <span className="text-2xl text-gray-400">{type}</span>
-      <span className="text-4xl text-gray-700">{latency}</span>
-    </div>
-  )
+const getPingImage = (latency) => {
+  if (latency === null) return null; 
+  
+  // Define thresholds
+  const thresholds = {
+    green: 80,  
+    orange: 150 
+  };
+  console.log('Latency:', latency);
+  if (latency <= thresholds.green) return GreenPing;
+  if (latency <= thresholds.orange) return OrangePing;
+  return RedPing;
 }
+
+const InfoBlock = ({ type, latency }) => {
+  const PingImage = getPingImage(latency); // Get the image based on latency
+  
+  return (
+    <div className="flex flex-col items-center justify-center border h-full p-4">
+      <div className="items-left">
+      <span className="text-normal text-customLavender">{type}</span>
+      <div className="flex items-center mt-4 space-x-4"> 
+        <span className="text-4xl text-sky-900">{latency}</span>
+      </div>
+    </div>
+    </div>
+  );
+};
+
 
 export function History({ startFromLatency, destinationFromLatency }) {
   const [regions, setRegions] = useState([])
@@ -116,25 +145,27 @@ export function History({ startFromLatency, destinationFromLatency }) {
     
   }
   return (
-    <div>
+    <div className="px-0 ">
       <NavBar page="Latency History" />
-      <div className="flex justify-center min-h-screen py-8 bg-sky-100">
-        <div className="flex flex-col w-11/12">
+      <div className="flex justify-center min-h-screen py-10 bg-customBg">
+        <div className="flex flex-col w-full ml-8 mr-5">
         <div className="flex flex-row">
-          <Link to="/latency" className="m-1 bg-white p-2 text-customPurple rounded-full"><ArrowLeft /></Link>   
-          <span className="text-2xl font-bold pt-2 pl-2 text-customText">
+          <Link to="/latency" className="mt-2 -ml-3 mr-4 bg-white p-2 text-sky-950 rounded-full"><ArrowLeft /></Link>   
+          <span className="text-3xl font-bold pt-2 text-sky-900">
             Historical Latency - Worldwide
           </span></div>
-          <span className="text-gray-400">
+          <span className="text-customLavender px-11 mt-0">
             View historical latency from location to AWS data centers worldwide
           </span>
+
+          
         
-          <div className="flex my-4 bg-white rounded-lg">
+          <div className="flex my-4 bg-white rounded-lg h-auto">
             <div className="w-1/2">
               <LinearChart pings={pings} startingLocation={startingLocation} destination={destination}/>
             </div>
             <div className="grid flex-1 grid-cols-2 grid-rows-2">
-              <InfoBlock type="16:00 PST" latency={getLatencyAt(16)} />
+              <InfoBlock type="16:00 PST" latency={getLatencyAt(16)} pingImage={getPingImage(16)}/>
               <InfoBlock type="Live" latency={getLiveLatency()} />
               <InfoBlock type="P50" latency={getPercentileLatency(50)} />
               <InfoBlock type="P90" latency={getPercentileLatency(90)} />
@@ -142,29 +173,31 @@ export function History({ startFromLatency, destinationFromLatency }) {
           </div>
           <div className="flex">
             <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
-              <div className="flex flex-col">
-                <span className="text-gray-400">Starting location:</span>
-                <span className="text-2xl text-gray-700">{startingLocation}</span>
+              <div className="flex flex-col justify-center items-start pl-5">
+                <span className="text-customLavender text-sm font-semibold">starting location:</span>
+                <span className="text-2xl text-customText">{startingLocation}</span>
+            
               </div>
               <Separator />
-              <div className="flex flex-col">
-                <span className="text-gray-400">Destination:</span>
-                <span className="text-2xl text-gray-700">{destination}</span>
+              <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
+                <span className="text-customLavender text-sm font-semibold">Destination:</span>
+                <span className="text-2xl text-customText">{destination}</span>
+              
               </div>
             </div>
-            <div className="flex-1 p-4 ml-2 bg-white rounded-lg">
-              <div className="flex justify-between">
-                <div className="flex flex-col">
-                  <span className="text-xl font-semibold">
+            <div className="flex-1 pt-5 ml-2 bg-white rounded-lg ">
+              <div className="flex justify-between pb-4 pt-4">
+                <div className="flex flex-row">
+                  <span className="text-2xl pl-8 pt-1 font-semibold text-sky-900 pb-2">
                     Region Performance{' '}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-customLavender pl-4 pt-4">
                     Select a final destination to view historical latency
                   </span>
                 </div>
                 <Input
-                  className="w-fit"
-                  placeholder="Search data center"
+                  className="w-fit mr-5"
+                  placeholder="search.."
                   onKeyPress={(e) =>
                     e.key === 'Enter' && setSearched(e.target.value)
                   }
@@ -173,13 +206,17 @@ export function History({ startFromLatency, destinationFromLatency }) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Select</TableHead>
-                    <TableHead>Region</TableHead>
+                    <TableHead>
+                    <div className="pl-5">Select</div>
+                      </TableHead>
+                    <TableHead>
+                        Region
+                      </TableHead>
                     <TableHead>Region Code</TableHead>
                     <TableHead>Latency (ms)</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className="text-xs">
+                <TableBody className="text-normal text-customPurple">
                   {regions?.map(
                     (region, index) =>
                       (region.name.toUpperCase() === searched.toUpperCase() ||
@@ -188,7 +225,9 @@ export function History({ startFromLatency, destinationFromLatency }) {
                           index <= tableIndex * 3)) && (
                         <TableRow key={region.code}>
                           <TableCell>
-                            <Button variant="outline" onClick={() => {setDestination(region.code)}}>Select</Button>
+                            <div className="pl-5">
+                            <Checkbox variant="outline" onClick={() => {setDestination(region.code)}}></Checkbox>
+                            </div>
                             {/* <Checkbox /> */}
                           </TableCell>{' '}
                           <TableCell>
@@ -204,7 +243,7 @@ export function History({ startFromLatency, destinationFromLatency }) {
               <Button
                 variant="outline"
                 size="icon"
-                className="aspect-square"
+                className="aspect-square bg-white border-none text-customMauve ml-6 mb-4"
                 onClick={() => {
                   tableIndex > 1 && setTableIndex(tableIndex - 1)
                   setSearched('')
@@ -215,15 +254,18 @@ export function History({ startFromLatency, destinationFromLatency }) {
               <Button
                 variant="outline"
                 size="icon"
-                className="ml-2 aspect-square"
+                className="aspect-square bg-white border-none text-customMauve ml-0 mb-4"
                 onClick={() => {
                   tableIndex < regions.length / 3 &&
                     setTableIndex(tableIndex + 1)
                   setSearched('')
                 }}
               >
+                
                 <ArrowDown />
+                <div className="font-semibold"> ....</div>
               </Button>
+  
             </div>
           </div>
         </div>

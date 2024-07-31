@@ -23,14 +23,18 @@ const chartConfig = {
   },
 }
 
-export function Component({ pings, startingLocation, destination }) {
+export function Component({ pings, startingLocation, start, destination }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Latency</CardTitle>
-        <CardDescription>
+        
+          <div className="text-2xl font-semibold text-customPurple pl-1">
+          Latency
+          </div>
+         
+        <div className="text-sm font-normal text-customMauve pl-1">
           {startingLocation + " to " + destination}
-        </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -38,8 +42,8 @@ export function Component({ pings, startingLocation, destination }) {
             accessibilityLayer
             data={pings}
             margin={{
-              left: 12,
-              right: 12,
+              left: -25,
+              right: 0,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -61,9 +65,10 @@ export function Component({ pings, startingLocation, destination }) {
             <Area
               dataKey="latency"
               type="linear"
-              fill="hsl(24, 100%, 50%)"
-              fillOpacity={0.4}
-              stroke="hsl(24, 100%, 50%)"
+              fill="hsl(39, 100%, 50%)"
+              fillOpacity={0.6}
+              stroke="hsl(30, 100%, 65%)"
+              strokeWidth="3"
             />
           </AreaChart>
         </ChartContainer>
