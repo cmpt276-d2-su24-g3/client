@@ -127,7 +127,7 @@ export function Chatbox() {
     }, [uuid]);
 
     const fetchHistory = async () => {
-        const response = await fetch(`https://zefta.catalpa.pw:8000/get-history`, {
+        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}/get-history`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ export function Chatbox() {
             time: new Date().toISOString()
         };
 
-        const response = await fetch('https://zefta.catalpa.pw:8000/chat', {
+        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -200,7 +200,7 @@ export function Chatbox() {
 
     const handleDeleteHistory = async () => {
         setLoading(true);
-        const response = await fetch(`https://zefta.catalpa.pw:8000/delete-history`, {
+        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}/delete-history`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
