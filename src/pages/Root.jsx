@@ -50,18 +50,21 @@ export function Root() {
     <div className="bg-white min-h-screen pt-16">
       <NavBar page="YYC Portal" />
 
-      <div className="flex justify-center items-center mx-20 py-16">
-        <div className="p-8 pt-14">
-          <h1 className="text-5xl text-sky-950 font-bold font-ember mb-6">AWS LQ</h1>
-          <p className="text-normal font-sans text-gray-700 font-ember mb-8 leading-relaxed">
-            Our tools provide precise latency data for location-to-region, <span className="text-customBtn">region-to-region</span>, <span className="text-customBtn">region-to-client</span>, and <span className="text-customBtn">client-to-region</span> testing, helping you ensure efficient and reliable network performance.
-          </p>
-          <button className="p-3 px-10 mb-6 rounded-full text-white bg-gradient-to-r from-violet-700 to-indigo-700 font-ember text-base shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <Link to="/latency">Get Started</Link>
-          </button>
+      <div className='flex justify-center'>
+        <div className="flex justify-center items-center mx-20 py-16 w-3/4">
+          <div className="pt-14">
+            <h1 className="text-5xl text-sky-950 font-bold font-ember mb-6">AWS LQ</h1>
+            <p className="text-normal font-sans text-gray-700 font-ember mb-8 leading-relaxed">
+              Our tools provide precise latency data for location-to-region, <span className="text-customBtn">region-to-region</span>, <span className="text-customBtn">region-to-client</span>, and <span className="text-customBtn">client-to-region</span> testing, helping you ensure efficient and reliable network performance.
+            </p>
+            <button className="p-3 px-10 mb-6 rounded-full text-white bg-gradient-to-r from-violet-700 to-indigo-700 font-ember text-base shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Link to="/latency">Get Started</Link>
+            </button>
+          </div>
+          <img src={WorldMap} alt="World Map" className="w-2/3"/>
         </div>
-        <img src={WorldMap} alt="World Map" className="w-2/3"/>
       </div>
+      
 
       <div className="flex justify-center mb-16">
         <div className="flex justify-evenly w-3/4 py-1 border border-gray-300 rounded-full shadow-sm bg-white">
@@ -98,20 +101,22 @@ export function Root() {
         </div>
       </div>
 
-      <div className="flex justify-center items-start mx-0 pb-32">
-        <div className="w-2/5 pt-20">
-          <h2 className="text-3xl font-bold font-ember text-sky-950 mb-6">{infoHighlighted}</h2>
-          <p className="text-lg text-gray-600 leading-relaxed">{infoContent[infoHighlighted]}</p>
-        </div>
-        <div className="w-full md:w-1/3 flex justify-center items-center">
-            <img className="h-64 pl-20 pt-10 object-contain" src={
-              infoHighlighted === "Amazon LQ" ? R2C_Image
-                : infoHighlighted === "Client to Region" ? C2R_Image
-                : infoHighlighted === "Region to Region" ? R2R_Image
-                : infoHighlighted === "Region to Client" ? R2C_Image
-                : Chatbox_Image
-            } alt="Related Illustration"/>
+      <div className='flex justify-center'>
+        <div className="flex items-start w-3/4 mx-0 pb-32">
+          <div className="w-2/5 pt-20">
+            <h2 className="text-3xl font-bold font-ember text-sky-950 mb-6">{infoHighlighted}</h2>
+            <p className="text-lg text-gray-600 leading-relaxed">{infoContent[infoHighlighted]}</p>
           </div>
+          <div className="flex-1 md:w-1/3 flex justify-center items-center">
+              <img className="h-64 pl-20 pt-10 object-contain" src={
+                infoHighlighted === "Amazon LQ" ? R2C_Image
+                  : infoHighlighted === "Client to Region" ? C2R_Image
+                  : infoHighlighted === "Region to Region" ? R2R_Image
+                  : infoHighlighted === "Region to Client" ? R2C_Image
+                  : Chatbox_Image
+              } alt="Related Illustration"/>
+            </div>
+        </div>
       </div>
     </div>
   );

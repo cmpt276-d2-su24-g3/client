@@ -57,10 +57,10 @@ const ChatInput = ({ disabled, onSubmit, placeholder, customSubmitIcon }) => {
     );
 
     return (
-        <div className="flex justify-center items-center w-full">
+        <div className="flex items-center flex-1">
             <textarea
                 ref={textAreaRef}
-                className="pl-8 pr-15 pt-4 mb-4 pb-0 bg-gradient-to-br from-slate-100 to-indigo-100 rounded-full w-3/5"
+                className="w-full pl-8 pr-15 pt-4 mb-4 pb-0 bg-gradient-to-br from-slate-100 to-indigo-100 rounded-full"
                 onKeyUp={handleEnterKey}
                 placeholder={placeholder ? placeholder : "Type here to chat"}
                 disabled={disabled}
@@ -246,14 +246,14 @@ export function Chatbox() {
                         <ChatConversations conversations={conversations} chatConversationsContainerRef={chatConversationsContainerRef} />
                     </div>
                 )}
-                <div className='w-full mt-2'>
+                <div className='flex w-3/5 mt-2'>
                     <ChatInput
                         disabled={loading}
                         onSubmit={handleButtonClick}
                         placeholder="Enter a prompt"
                         customSubmitIcon={<img src={SendIcon} alt="Send" className="mr-1  mb-2 ml-1 h-6" />}
                     />
-                    <Menubar className='mt-2'>
+                    <Menubar className='mt-2 ml-4'>
                         <MenubarMenu>
                             <MenubarTrigger>...</MenubarTrigger>
                             <MenubarContent>
