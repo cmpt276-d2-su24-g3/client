@@ -3,7 +3,6 @@ import { NavBar } from '@/components/NavBar';
 import { v4 as uuidv4 } from 'uuid';
 import SendIcon from '@/src/assets/send-icon.svg';
 import ChatIcon from '@/src/assets/chatbot-icon.svg';
-import { LoginRedirectPopup } from '@/components/LoginRedirectPopup';
 import {
     Menubar,
     MenubarContent,
@@ -220,7 +219,6 @@ export function Chatbox() {
     return (
         <div className="flex flex-col h-screen bg-white mt-16">
             <NavBar page="Chatbox" />
-            <LoginRedirectPopup mode="authorize" />
             <div className='flex flex-col justify-between items-center w-full h-full p-4'>
                 {conversations.length === 0 ? (
                     <>
