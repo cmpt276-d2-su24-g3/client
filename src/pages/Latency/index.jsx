@@ -5,6 +5,7 @@ import { RegionsInput } from './RegionsInput'
 import LatencyTable from './LatencyTable'
 import { memoize } from '@/lib/utils'
 import { NavBar } from '@/components/NavBar'
+import regionsJs from '@/lib/regionsJs'
 
 // TODO: Generate based on user location?
 const DEFAULT_REGION_AREAS = ['Americas']
@@ -18,21 +19,11 @@ export function Latency() {
 
   useEffect(() => {
     ;(async () => {
-      try {
-        const res = await fetch(
-          import.meta.env.VITE_API_URL + '/data/regions.json',
-        )
-        if (!res.ok) throw new Error('Failed to fetch regions')
-        const regions = (await res.json()).map((region) => ({
-          ...region,
-          selected: DEFAULT_REGION_AREAS.includes(region.area),
-        }))
-        setRegions(regions)
-      } catch (error) {
-        setError(error)
-      } finally {
-        setLoading(false)
-      }
+      const regions = regionsJs.map((region) => ({
+        ...region,
+        selected: DEFAULT_REGION_AREAS.includes(region.area),
+      }))
+      setRegions(regions)
     })()
   }, [])
 
@@ -98,6 +89,7 @@ async function getClientRegionLatencies(regions, setLatencies) {
 }
 
 async function getClientRegionLatency(region) {
+  console.log(region.code)
   const url = `https://dynamodb.${region.code}.amazonaws.com`
   const now = performance.now()
   await fetch(url)
