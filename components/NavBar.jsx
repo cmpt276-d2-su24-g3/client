@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom'
 
 import AWS_Logo from "@/AWS_Logo.png"
-import { ProfileLogin } from './ui/ProfileLogin'
-import { ConditionalAdmin } from './ui/conditionalAdmin'
 
 import ChatboxIcon from "@/src/assets/ai-icon.svg"
 import HistoryIcon from "@/src/assets/history-icon.svg"
@@ -36,9 +34,6 @@ export function NavBar({ page }) {
                     <span>Chatbot</span>
                     {page === "Chatbox" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
-                <div className="flex text-black w-full justify-end">
-                    <ProfileLogin prop={page} />
-                </div>
             </div>
             
         </div>

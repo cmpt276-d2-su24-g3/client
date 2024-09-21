@@ -8,8 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Component as LinearChart } from '@/components/ui/linearchart'
-import { isAdmin } from '@/lib/utils'
-import { LoginRedirectPopup } from '@/components/LoginRedirectPopup'
 import {
   Table,
   TableBody,
@@ -117,134 +115,130 @@ export function History({ startFromLatency, destinationFromLatency }) {
     const index = Math.floor((percentile / 100) * sortedLatencies.length)
     return Math.round(sortedLatencies[index]) + ' ms'
   }
-  if(isAdmin()) {
-    
-  }
-  return (
-    <div>
-      <div className="px-0 mt-16"></div>
-      <NavBar page="Latency History" />
-      <div className="flex justify-center min-h-screen py-10 bg-customBg">
-        <div className="flex flex-col w-full ml-8 mr-5">
-        <div className="flex flex-row">
-        <Link to="/latency" className="mt-2 -ml-3 mr-4 bg-white p-2 text-sky-950 rounded-full"><ArrowLeft /></Link>   
-          <span className="text-3xl font-bold pt-2 text-sky-900">
-            Historical Latency - Worldwide
-          </span></div>
-          <span className="text-customLavender px-11 mt-0">
-            View historical latency from location to AWS data centers worldwide
-          </span>
-        
-          <div className="flex my-4 bg-white h-auto rounded-lg">
-            <div className="w-1/2">
-              <LinearChart pings={pings} startingLocation={startingLocation} destination={destination}/>
+
+return (
+  <div>
+    <div className="px-0 mt-16"></div>
+    <NavBar page="Latency History" />
+    <div className="flex justify-center min-h-screen py-10 bg-customBg">
+      <div className="flex flex-col w-full ml-8 mr-5">
+      <div className="flex flex-row">
+      <Link to="/latency" className="mt-2 -ml-3 mr-4 bg-white p-2 text-sky-950 rounded-full"><ArrowLeft /></Link>   
+        <span className="text-3xl font-bold pt-2 text-sky-900">
+          Historical Latency - Worldwide
+        </span></div>
+        <span className="text-customLavender px-11 mt-0">
+          View historical latency from location to AWS data centers worldwide
+        </span>
+      
+        <div className="flex my-4 bg-white h-auto rounded-lg">
+          <div className="w-1/2">
+            <LinearChart pings={pings} startingLocation={startingLocation} destination={destination}/>
+          </div>
+          <div className="grid flex-1 grid-cols-2 grid-rows-2">
+            <InfoBlock type="16:00 PST" latency={getLatencyAt(16)} />
+            <InfoBlock type="Live" latency={getLiveLatency()} />
+            <InfoBlock type="P50" latency={getPercentileLatency(50)} />
+            <InfoBlock type="P90" latency={getPercentileLatency(90)} />
+          </div>
+          </div>
+        <div className="flex">
+          <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
+            <div className="flex flex-col justify-center items-start pl-5">
+              <span className="text-customLavender text-sm font-semibold">starting location:</span>
+              <span className="text-2xl text-customText">{startingLocation}</span>
+          
             </div>
-            <div className="grid flex-1 grid-cols-2 grid-rows-2">
-              <InfoBlock type="16:00 PST" latency={getLatencyAt(16)} />
-              <InfoBlock type="Live" latency={getLiveLatency()} />
-              <InfoBlock type="P50" latency={getPercentileLatency(50)} />
-              <InfoBlock type="P90" latency={getPercentileLatency(90)} />
-            </div>
-            </div>
-          <div className="flex">
+            <Separator />
             <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
-              <div className="flex flex-col justify-center items-start pl-5">
-                <span className="text-customLavender text-sm font-semibold">starting location:</span>
-                <span className="text-2xl text-customText">{startingLocation}</span>
+              <span className="text-customLavender text-sm font-semibold">Destination:</span>
+              <span className="text-2xl text-customText">{destination}</span>
             
+            </div>
+          </div>
+          <div className="flex-1 pt-5 ml-2 bg-white rounded-lg ">
+            <div className="flex justify-between pb-4 pt-4">
+              <div className="flex flex-row">
+                <span className="text-2xl pl-8 pt-1 font-semibold text-sky-900 pb-2">
+                  Region Performance{' '}
+                </span>
+                <span className="text-xs text-customLavender pl-4 pt-4">
+                  Select a final destination to view historical latency
+                </span>
               </div>
-              <Separator />
-              <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
-                <span className="text-customLavender text-sm font-semibold">Destination:</span>
-                <span className="text-2xl text-customText">{destination}</span>
+              <Input
+                className="w-fit mr-5"
+                placeholder="search.."
+                onKeyPress={(e) =>
+                  e.key === 'Enter' && setSearched(e.target.value)
+                }
+              />
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>
+                  <div className="pl-5">Select</div>
+                    </TableHead>
+                  <TableHead>
+                      Region
+                    </TableHead>
+                  <TableHead>Region Code</TableHead>
+                  <TableHead>Latency (ms)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="text-normal text-customPurple">
+                {regions?.map(
+                  (region, index) =>
+                    (region.name.toUpperCase() === searched.toUpperCase() ||
+                      (searched === '' &&
+                        index >= tableIndex * 3 - 2 &&
+                        index <= tableIndex * 3)) && (
+                      <TableRow key={region.code}>
+                        <TableCell>
+                          <div className="pl-5">
+                          <Checkbox variant="outline" onClick={() => {setDestination(region.code)}}></Checkbox>
+                          </div>
+                          {/* <Checkbox /> */}
+                        </TableCell>{' '}
+                        <TableCell>
+                          {region.name} ({region.area})
+                        </TableCell>
+                        <TableCell>{region.code}</TableCell>
+                        <TableCell>100 ms</TableCell>
+                      </TableRow>
+                    ),
+                )}
+              </TableBody>
+            </Table>
+            <Button
+              variant="outline"
+              size="icon"
+              className="aspect-square bg-white border-none text-customMauve ml-6 mb-4"
+              onClick={() => {
+                tableIndex > 1 && setTableIndex(tableIndex - 1)
+                setSearched('')
+              }}
+            >
+              <ArrowUp />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="aspect-square bg-white border-none text-customMauve ml-0 mb-4"
+              onClick={() => {
+                tableIndex < regions.length / 3 &&
+                  setTableIndex(tableIndex + 1)
+                setSearched('')
+              }}
+            >
               
-              </div>
-            </div>
-            <div className="flex-1 pt-5 ml-2 bg-white rounded-lg ">
-              <div className="flex justify-between pb-4 pt-4">
-                <div className="flex flex-row">
-                  <span className="text-2xl pl-8 pt-1 font-semibold text-sky-900 pb-2">
-                    Region Performance{' '}
-                  </span>
-                  <span className="text-xs text-customLavender pl-4 pt-4">
-                    Select a final destination to view historical latency
-                  </span>
-                </div>
-                <Input
-                  className="w-fit mr-5"
-                  placeholder="search.."
-                  onKeyPress={(e) =>
-                    e.key === 'Enter' && setSearched(e.target.value)
-                  }
-                />
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                    <div className="pl-5">Select</div>
-                      </TableHead>
-                    <TableHead>
-                        Region
-                      </TableHead>
-                    <TableHead>Region Code</TableHead>
-                    <TableHead>Latency (ms)</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="text-normal text-customPurple">
-                  {regions?.map(
-                    (region, index) =>
-                      (region.name.toUpperCase() === searched.toUpperCase() ||
-                        (searched === '' &&
-                          index >= tableIndex * 3 - 2 &&
-                          index <= tableIndex * 3)) && (
-                        <TableRow key={region.code}>
-                          <TableCell>
-                            <div className="pl-5">
-                            <Checkbox variant="outline" onClick={() => {setDestination(region.code)}}></Checkbox>
-                            </div>
-                            {/* <Checkbox /> */}
-                          </TableCell>{' '}
-                          <TableCell>
-                            {region.name} ({region.area})
-                          </TableCell>
-                          <TableCell>{region.code}</TableCell>
-                          <TableCell>100 ms</TableCell>
-                        </TableRow>
-                      ),
-                  )}
-                </TableBody>
-              </Table>
-              <Button
-                variant="outline"
-                size="icon"
-                className="aspect-square bg-white border-none text-customMauve ml-6 mb-4"
-                onClick={() => {
-                  tableIndex > 1 && setTableIndex(tableIndex - 1)
-                  setSearched('')
-                }}
-              >
-                <ArrowUp />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="aspect-square bg-white border-none text-customMauve ml-0 mb-4"
-                onClick={() => {
-                  tableIndex < regions.length / 3 &&
-                    setTableIndex(tableIndex + 1)
-                  setSearched('')
-                }}
-              >
-                
-                <ArrowDown />
-                <div className="font-semibold"> ....</div>
-              </Button>
-            </div>
+              <ArrowDown />
+              <div className="font-semibold"> ....</div>
+            </Button>
           </div>
         </div>
       </div>
-      <LoginRedirectPopup mode="admin" />
     </div>
-  )
-}
+  </div>
+)}
