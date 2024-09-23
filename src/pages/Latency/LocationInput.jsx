@@ -154,8 +154,8 @@ export function LocationInput({ regions, setLocation }) {
             onBlur={(e) => setUrl(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && setUrl(e.target.value)}
           />
-
-          <div className="flex items-center gap-2 pl-4">
+          </div>
+          <div className="flex items-center gap-2 pt-4">
             <Checkbox
               id="user-location-checkbox"
               checked={locationType === LocationType.User}
@@ -173,7 +173,6 @@ export function LocationInput({ regions, setLocation }) {
             >
               Use my location
             </label>
-          </div>
         </div>
       </CardContent>
     </Card>
