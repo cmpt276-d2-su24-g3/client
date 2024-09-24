@@ -1,6 +1,8 @@
 "use client"
 
+import { useEffect, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Separator } from '@/components/ui/separator'
 
 import {
   Card,
@@ -24,16 +26,32 @@ const chartConfig = {
 }
 
 export function Component({ pings, startingLocation, start, destination }) {
+  const [timeFrame, setTimeFrame] = useState("1 hour")
+  
   return (
     <Card>
       <CardHeader>
-        
-          <div className="text-2xl font-semibold text-customPurple pl-1">
-          Latency
-          </div>
-         
-        <div className="text-sm font-normal text-customMauve pl-1">
-          {startingLocation + " to " + destination}
+        <div className="text-2xl font-semibold text-customPurple pl-1 mb-2">
+          Latency History
+        </div>
+        <Separator/>
+        <div className='flex justify-evenly p-4'>
+          <button onClick={() => setTimeFrame("1 hour")}>
+            <span>1 hour</span>
+            {timeFrame === "1 hour" && <div className="py-0.5 bg-gray-500"></div>}
+          </button>
+          <button onClick={() => setTimeFrame("24 hours")}>
+            <span>24 hours</span>
+            {timeFrame === "24 hours" && <div className="py-0.5 bg-gray-500"></div>}
+          </button>
+          <button onClick={() => setTimeFrame("7 days")}>
+            <span>7 days</span>
+            {timeFrame === "7 days" && <div className="py-0.5 bg-gray-500"></div>}
+          </button>
+          <button onClick={() => setTimeFrame("30 days")}>
+            <span>30 days</span>
+            {timeFrame === "30 days" && <div className="py-0.5 bg-gray-500"></div>}
+          </button>
         </div>
       </CardHeader>
       <CardContent>
