@@ -91,6 +91,7 @@ async function getClientRegionLatencies(regions, setLatencies) {
 async function getClientRegionLatency(region) {
   console.log(region.code)
   const url = `https://dynamodb.${region.code}.amazonaws.com`
+  await fetch(url)
   const now = performance.now()
   await fetch(url)
   const latency = performance.now() - now

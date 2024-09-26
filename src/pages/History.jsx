@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowDown, ArrowUp } from 'lucide-react'
+import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpRight } from 'lucide-react'
 
 import { NavBar } from '@/components/NavBar'
 import { Separator } from '@/components/ui/separator'
@@ -17,15 +17,17 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import regionsJs from '@/lib/regionsJs'
+
 const InfoBlock = ({ type, latency }) => {
   return (
-    <div className="flex flex-col items-center justify-center border h-full p-4">
+    <div className="flex flex-col items-center justify-center border h-full w-1/3 p-4">
       <div className="items-left">
-      <span className="text-normal text-customLavender">{type}</span>
-      <div className="flex items-center mt-4 space-x-4"> 
-        <span className="text-4xl text-sky-900">{latency}</span>
+        <div className="flex items-center mt-4 space-x-4"> 
+          <span className="text-4xl text-sky-900">{latency}</span>
+        </div>
+        <span className="text-normal text-customLavender">{type}</span>
       </div>
-    </div>
     </div>
   );
 };
@@ -33,8 +35,6 @@ const InfoBlock = ({ type, latency }) => {
 
 export function History({ startFromLatency, destinationFromLatency }) {
   const [regions, setRegions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [searched, setSearched] = useState('')
   const [tableIndex, setTableIndex] = useState(1)
   const [pings, setPings] = useState([])
@@ -49,18 +49,8 @@ export function History({ startFromLatency, destinationFromLatency }) {
 
   useEffect(() => {
     ;(async () => {
-      try {
-        const res = await fetch(
-          import.meta.env.VITE_API_URL + '/data/regions.json'
-        )
-        if (!res.ok) throw new Error('Failed to fetch regions')
-        const regions = await res.json()
-        setRegions(regions)
-      } catch (error) {
-        setError(error)
-      } finally {
-        setLoading(false)
-      }
+      const regions = regionsJs
+      setRegions(regions)
     })()
   }, [])
 
@@ -85,7 +75,6 @@ export function History({ startFromLatency, destinationFromLatency }) {
 
         setPings(filteredData)
       } catch (error) {
-        setError(error)
       }
     })()
   }, [startingLocation, destination])
@@ -130,37 +119,55 @@ return (
         <span className="text-customLavender px-11 mt-0">
           View historical latency from location to AWS data centers worldwide
         </span>
-      
         <div className="flex my-4 bg-white h-auto rounded-lg">
-          <div className="w-1/2">
+          <div className="w-3/5">
             <LinearChart pings={pings} startingLocation={startingLocation} destination={destination}/>
           </div>
-          <div className="grid flex-1 grid-cols-2 grid-rows-2">
-            <InfoBlock type="16:00 PST" latency={getLatencyAt(16)} />
-            <InfoBlock type="Live" latency={getLiveLatency()} />
-            <InfoBlock type="P50" latency={getPercentileLatency(50)} />
-            <InfoBlock type="P90" latency={getPercentileLatency(90)} />
-          </div>
-          </div>
-        <div className="flex">
-          <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
-            <div className="flex flex-col justify-center items-start pl-5">
-              <span className="text-customLavender text-sm font-semibold">starting location:</span>
-              <span className="text-2xl text-customText">{startingLocation}</span>
-          
+          <div className='flex-1'>
+            <div className='flex'>
+              <InfoBlock type="Live" latency={getLiveLatency()} />
+              <InfoBlock type="P50" latency={getPercentileLatency(50)} />
+              <InfoBlock type="P90" latency={getPercentileLatency(90)} />
             </div>
+            <div className='flex'>
+              <div className='flex flex-col m-10'>
+                <span className='font-semibold text-sky-900 mb-6'>Details</span>
+                <span className='my-2 text-gray-500'>Total # of requests</span>
+                <span className='my-2 text-gray-500'>Distinct IPs</span>
+                <span className='my-2 text-gray-500'>Distinct variable combinations</span>
+                <span className='my-2 text-gray-500'>Distinct headers combinations</span>
+                <span className='my-2 text-gray-500'>Distinct response body values</span>
+                <span className='my-2 text-gray-500'>Other distinct request parts</span>
+              </div>
+              <div className='flex flex-col m-10'>
+                <span className='my-2 mt-14'>Placeholder</span>
+                <span className='my-2'>Placeholder</span>
+                <span className='my-2'>Placeholder</span>
+                <span className='my-2'>Placeholder</span>
+                <span className='my-2'>Placeholder</span>
+                <span className='my-2'>Placeholder</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex">
+          <div className="flex flex-col w-2/5 p-8 mr-2 bg-white rounded-lg">
+            <span className="mb-4 text-2xl font-medium text-sky-900">
+              Services Offered
+            </span>
             <Separator />
-            <div className="flex flex-col w-2/5 p-4 mr-2 bg-white rounded-lg justify-evenly">
-              <span className="text-customLavender text-sm font-semibold">Destination:</span>
-              <span className="text-2xl text-customText">{destination}</span>
-            
+            <div className='mt-4 grid grid-cols-2 gap-y-2'>
+              <div className='flex'>
+                <Link className="text-gray-500" to="/latency">AWS LakeFormation</Link>
+                <ArrowUpRight />
+              </div>
             </div>
           </div>
           <div className="flex-1 pt-5 ml-2 bg-white rounded-lg ">
             <div className="flex justify-between pb-4 pt-4">
               <div className="flex flex-row">
-                <span className="text-2xl pl-8 pt-1 font-semibold text-sky-900 pb-2">
-                  Region Performance{' '}
+                <span className="text-2xl pl-8 font-medium text-sky-900 pb-2">
+                  Region Selection{' '}
                 </span>
                 <span className="text-xs text-customLavender pl-4 pt-4">
                   Select a final destination to view historical latency
