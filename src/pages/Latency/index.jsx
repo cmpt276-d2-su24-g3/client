@@ -10,7 +10,7 @@ import regionsJs from '@/lib/regionsJs'
 // TODO: Generate based on user location?
 const DEFAULT_REGION_AREAS = ['Americas']
 
-export function Latency() {
+export function Latency({ R2RUrl, R2CUrl }) {
   const [regions, setRegions] = useState([])
   const [latencies, setLatencies] = useState([])
   const [loading, setLoading] = useState(true)
