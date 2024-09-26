@@ -17,6 +17,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import regionsJs from '@/lib/regionsJs'
+
 const InfoBlock = ({ type, latency }) => {
   return (
     <div className="flex flex-col items-center justify-center border h-full w-1/3 p-4">
@@ -33,8 +35,6 @@ const InfoBlock = ({ type, latency }) => {
 
 export function History({ startFromLatency, destinationFromLatency }) {
   const [regions, setRegions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [searched, setSearched] = useState('')
   const [tableIndex, setTableIndex] = useState(1)
   const [pings, setPings] = useState([])
@@ -49,18 +49,8 @@ export function History({ startFromLatency, destinationFromLatency }) {
 
   useEffect(() => {
     ;(async () => {
-      try {
-        const res = await fetch(
-          import.meta.env.VITE_API_URL + '/data/regions.json'
-        )
-        if (!res.ok) throw new Error('Failed to fetch regions')
-        const regions = await res.json()
-        setRegions(regions)
-      } catch (error) {
-        setError(error)
-      } finally {
-        setLoading(false)
-      }
+      const regions = regionsJs
+      setRegions(regions)
     })()
   }, [])
 
@@ -85,7 +75,6 @@ export function History({ startFromLatency, destinationFromLatency }) {
 
         setPings(filteredData)
       } catch (error) {
-        setError(error)
       }
     })()
   }, [startingLocation, destination])
