@@ -98,12 +98,13 @@ const ChatMessage = ({ message }) => {
     );
 };
 
-export function Chatbox() {
+export function Chatbox({ apiUrl }) {
     const [input, setInput] = useState('');
     const [uuid, setUuid] = useState('');
     const [conversations, setConversations] = useState([]);
     const [loading, setLoading] = useState(false);
     const chatConversationsContainerRef = useRef(null);
+    console.log(apiUrl)
 
     useEffect(() => {
         const initializeUuid = () => {
@@ -126,7 +127,7 @@ export function Chatbox() {
     }, [uuid]);
 
     const fetchHistory = async () => {
-        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}/get-history`, {
+        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}get-history`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -153,8 +154,8 @@ export function Chatbox() {
             session_id: uuid,
             time: new Date().toISOString()
         };
-
-        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}/chat`, {
+        console.log(import.meta.env.VITE_CHATBOT_API_URL)
+        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,7 +200,7 @@ export function Chatbox() {
 
     const handleDeleteHistory = async () => {
         setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}/delete-history`, {
+        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}delete-history`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
