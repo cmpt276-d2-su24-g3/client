@@ -9,6 +9,7 @@ import { loadConfig } from '@/lib/utils'
 
 export default function App() {
   const [chatbotApiUrl, setChatbotApiUrl] = useState(null);
+  const [chatbotApiKey, setChatbotApiKey] = useState(null);
   const [R2RApiUrl, setR2RApiUrl] = useState(null);
   const [R2CApiUrl, setR2CApiUrl] = useState(null);
 
@@ -16,6 +17,7 @@ export default function App() {
     async function fetchConfig() {
       const config = await loadConfig();
       setChatbotApiUrl(config.VITE_CHATBOT_API_URL);
+      setChatbotApiKey(config.VITE_CHATBOT_API_KEY)
       setR2RApiUrl(config.VITE_AWS_API_URL);
       setR2CApiUrl(config.VITE_AWS_R2C_URL);
     }
@@ -35,7 +37,7 @@ export default function App() {
           <Route index element={<Root />} />
           <Route path="/latency" element={<Latency R2RUrl={R2RApiUrl} R2CUrl={R2CApiUrl} />} />
           <Route path="/history" element={<History />}/>
-          <Route path="/chatbox" element={<Chatbox apiUrl={chatbotApiUrl}/>}/>
+          <Route path="/chatbox" element={<Chatbox apiUrl={chatbotApiUrl} apiKey={chatbotApiKey}/>}/>
         </Routes>
       </BrowserRouter>
     </div>

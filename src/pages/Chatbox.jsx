@@ -98,7 +98,7 @@ const ChatMessage = ({ message }) => {
     );
 };
 
-export function Chatbox({ apiUrl }) {
+export function Chatbox({ apiUrl, apiKey }) {
     const [input, setInput] = useState('');
     const [uuid, setUuid] = useState('');
     const [conversations, setConversations] = useState([]);
@@ -131,7 +131,7 @@ export function Chatbox({ apiUrl }) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': import.meta.env.VITE_CHATBOT_API_KEY,
+                'X-API-Key': apiKey,
             },
             body: JSON.stringify({ session_id: uuid }),
         });
@@ -159,7 +159,7 @@ export function Chatbox({ apiUrl }) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': import.meta.env.VITE_CHATBOT_API_KEY,
+                'X-API-Key': apiKey,
             },
             body: JSON.stringify(requestData),
         });
@@ -204,7 +204,7 @@ export function Chatbox({ apiUrl }) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': import.meta.env.VITE_CHATBOT_API_KEY,
+                'X-API-Key': apiKey,
             },
             body: JSON.stringify({ session_id: uuid }),
         });
