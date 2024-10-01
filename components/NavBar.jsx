@@ -10,9 +10,9 @@ export function NavBar({ page }) {
                 <img
                     alt="AWS"
                     src={AWS_Logo}
-                    className="mx-7  mh-7 h-5" // Adjusted size for AWS logo
+                    className="mx-7 h-7" // Adjusted size for AWS logo
                 />
-                <Link className="mx-6 pl-7 whitespace-nowrap flex items-center text-sm" to="/">
+                <Link className="mx-6 pl-2 whitespace-nowrap flex items-center text-sm" to="/">
                     <span>AWS LQ</span>
                     {page === "YYC Portal" && <div className="py-1 bg-orange-500"></div>}
                 </Link>
