@@ -13,7 +13,7 @@ const DEFAULT_REGION_AREAS = ['Americas']
 export function Latency({ R2RUrl, R2CUrl }) {
   const [regions, setRegions] = useState([])
   const [latencies, setLatencies] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [location, setLocation] = useState(null)
 

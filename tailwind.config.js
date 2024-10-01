@@ -62,7 +62,9 @@ module.exports = {
         customMauve: '#9D93A8',
         customBg: '#F5F8FF',
         customBtn: '#4F0DDA',
-        customText: '#556982'
+        customText: '#556982',
+        customNav: '#182330',
+        customGray: '#77829E'
       },
       fontFamily: {
         ember: ['Amazon Ember', 'ui-sans-serif', 'system-ui'], // Extend the default sans font family
