@@ -40,15 +40,18 @@ export function Latency({ R2RUrl, R2CUrl }) {
 
   useEffect(() => {
     ;(async () => {
-      if (loading || error || regions.length === 0) return
-      if (location.type === LocationType.User)
-        await getClientRegionLatencies(regions, setLatencies)
-      else if (location.type === LocationType.Region && location.code)
-        await getRegionRegionLatencies(location.code, latencies, setLatencies)
-      else if (location.type === LocationType.Website && location.url)
-        await getRegionClientLatencies(location.url, setLatencies)
-    })()
-  }, [location, regions, loading, error])
+      if (loading || error || regions.length === 0) return;
+      if (location.type === LocationType.User) {
+        await getClientRegionLatencies(regions, setLatencies);
+      } else if (location.type === LocationType.Region && location.code) {
+        await getRegionRegionLatencies(location.code, latencies, setLatencies);
+      } else if (location.type === LocationType.Website && location.url) {
+        console.log('Location URL:', location.url);
+        await getRegionClientLatencies(location.url, setLatencies);
+      }
+    })();
+  }, [location, regions, loading, error]);
+  
 
   return (
     <>
@@ -100,51 +103,110 @@ async function getClientRegionLatency(region) {
 
 
 //Region-to-Client
-async function getRegionClientLatencies(url, setLatencies) {
-  try {
-    const encodedUrl = encodeURIComponent(url)
-    const response = await fetch(
-      `${import.meta.env.VITE_AWS_R2C_URL}?origin=${encodedUrl}`,
-    )
-    if (!response.ok) throw new Error('Failed to fetch region client latencies')
-    const data = await response.json()
-    setLatencies(
-      data.map((item) => ({
-        region: item.region,
-        latency: parseFloat(item.latency),
-      }))
-    )
-  } catch (error) {
-    console.error('Error fetching region client latencies:', error)
+// Map of regions to Lambda function URLs
+const regionToUrlMap = {
+  'us-west-2': import.meta.env.VITE_AWS_R2C_URL_US_WEST_2,
+  // Add other regions as needed
+};
+
+async function getRegionClientLatencies(host, setLatencies) {
+  const filteredRegions = Object.keys(regionToUrlMap);
+
+  for (const region of filteredRegions) {
+    try {
+      const response = await fetch(regionToUrlMap[region], {
+        method: 'POST',
+        body: JSON.stringify({ region, host }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const responseBody = await response.json();
+      console.log(`Response from region ${region}:`, responseBody); // Log response to inspect it
+
+      const latency = parseFloat(responseBody.latency);
+
+      if (isNaN(latency)) {
+        console.error(`Invalid latency for region ${region}:`, responseBody);
+        continue;
+      }
+
+      setLatencies((latencies) =>
+        latencies.map((l) =>
+          l.region === region ? { ...l, latency } : l
+        )
+      );
+    } catch (error) {
+      console.error(`Error fetching latencies for region ${region}:`, error);
+      setLatencies((latencies) =>
+        latencies.map((l) =>
+          l.region === region ? { ...l, latency: Infinity } : l
+        )
+      );
+    }
   }
 }
 
-//Region-to-Region
+
+
+
+
+// Region-to-Region 
 async function getRegionRegionLatencies(origin, latencies, setLatencies) {
-  latencies = latencies.map((l) => ({ ...l, latency: Infinity }))
-  setLatencies(latencies)
-  const data = await getRegionRegionDataCached(origin)
-  const newLatencies = [...latencies]
-  latencies.forEach((latency, i) => {
-    if (latency.region === origin) return
-    const newLatency = data.find((l) => l.destination === latency.region)
-    if (newLatency) newLatencies[i].latency = newLatency.latency
-  })
-  setLatencies(newLatencies)
+  // Set all latencies to Infinity initially
+  latencies = latencies.map((l) => ({ ...l, latency: Infinity }));
+  setLatencies(latencies);
+
+  try {
+    // Get the region-to-region latency data from the cache (or from the API Gateway)
+    const data = await getRegionRegionDataCached(origin);
+
+    // Create a new latencies array to update the state
+    const newLatencies = [...latencies];
+    latencies.forEach((latency, i) => {
+      if (latency.region === origin) return;
+      const newLatency = data.find((l) => l.destination === latency.region);
+      if (newLatency) newLatencies[i].latency = newLatency.latency;
+    });
+
+    // Update the latencies state with the new data
+    setLatencies(newLatencies);
+  } catch (error) {
+    console.error("Error fetching region-to-region latencies:", error);
+  }
 }
 
+// Fetch data from API Gateway
 async function getRegionRegionData(origin) {
-  const response = await fetch(
-    import.meta.env.VITE_AWS_API_URL + `?origin=${origin}`,
-  )
-  const json = await response.json()
+  try {
+    // Make a request to your API Gateway, passing the origin as a query parameter
+    const response = await fetch(
+      `${import.meta.env.VITE_AWS_API_URL}?origin=${origin}`
+    );
 
-  return json.details.map((item) => ({
-    origin: item.origin,
-    destination: item.destination,
-    latency: parseFloat(item.latency),
-    timestamp: new Date(item.timestamp).getTime(),
-  })).sort((a, b) => a.timestamp - b.timestamp)
+    // If the response is not OK, throw an error
+    if (!response.ok) {
+      throw new Error('Failed to fetch region-to-region latencies');
+    }
+
+    // Parse the response as JSON
+    const json = await response.json();
+
+    // Return the sorted latency data
+    return json.details
+      .map((item) => ({
+        origin: item.origin,
+        destination: item.destination,
+        latency: parseFloat(item.latency),
+        timestamp: new Date(item.timestamp).getTime(),
+      }))
+      .sort((a, b) => a.timestamp - b.timestamp);
+  } catch (error) {
+    console.error('Error fetching region-to-region data:', error);
+    return [];
+  }
 }
 
-const getRegionRegionDataCached = memoize(getRegionRegionData)
+// Memoized version of getRegionRegionData to cache the results
+const getRegionRegionDataCached = memoize(getRegionRegionData);
