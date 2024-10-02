@@ -105,9 +105,37 @@ async function getClientRegionLatency(region) {
 //Region-to-Client
 // Map of regions to Lambda function URLs
 const regionToUrlMap = {
+  'us-east-1': import.meta.env.VITE_AWS_R2C_URL_US_EAST_1,
+  'us-east-2': import.meta.env.VITE_AWS_R2C_URL_US_EAST_2,
+  'us-west-1': import.meta.env.VITE_AWS_R2C_URL_US_WEST_1,
   'us-west-2': import.meta.env.VITE_AWS_R2C_URL_US_WEST_2,
-  // Add other regions as needed
+  'af-south-1': import.meta.env.VITE_AWS_R2C_URL_AF_SOUTH_1,
+  'ap-east-1': import.meta.env.VITE_AWS_R2C_URL_AP_EAST_1,
+  'ap-south-2': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTH_2,
+  'ap-southeast-3': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_3,
+  'ap-southeast-4': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_4,
+  'ap-south-1': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTH_1,
+  'ap-northeast-3': import.meta.env.VITE_AWS_R2C_URL_AP_NORTHEAST_3,
+  'ap-northeast-2': import.meta.env.VITE_AWS_R2C_URL_AP_NORTHEAST_2,
+  'ap-southeast-1': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_1,
+  'ap-southeast-2': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_2,
+  'ap-northeast-1': import.meta.env.VITE_AWS_R2C_URL_AP_NORTHEAST_1,
+  'ca-central-1': import.meta.env.VITE_AWS_R2C_URL_CA_CENTRAL_1,
+  'ca-west-1': import.meta.env.VITE_AWS_R2C_URL_CA_WEST_1,
+  'eu-central-1': import.meta.env.VITE_AWS_R2C_URL_EU_CENTRAL_1,
+  'eu-west-1': import.meta.env.VITE_AWS_R2C_URL_EU_WEST_1,
+  'eu-west-2': import.meta.env.VITE_AWS_R2C_URL_EU_WEST_2,
+  'eu-south-1': import.meta.env.VITE_AWS_R2C_URL_EU_SOUTH_1,
+  'eu-west-3': import.meta.env.VITE_AWS_R2C_URL_EU_WEST_3,
+  'eu-south-2': import.meta.env.VITE_AWS_R2C_URL_EU_SOUTH_2,
+  'eu-north-1': import.meta.env.VITE_AWS_R2C_URL_EU_NORTH_1,
+  'eu-central-2': import.meta.env.VITE_AWS_R2C_URL_EU_CENTRAL_2,
+  'me-south-1': import.meta.env.VITE_AWS_R2C_URL_ME_SOUTH_1,
+  'me-central-1': import.meta.env.VITE_AWS_R2C_URL_ME_CENTRAL_1,
+  'il-central-1': import.meta.env.VITE_AWS_R2C_URL_IL_CENTRAL_1,
+  'sa-east-2': import.meta.env.VITE_AWS_R2C_URL_SA_EAST_2
 };
+
 
 async function getRegionClientLatencies(host, setLatencies) {
   const filteredRegions = Object.keys(regionToUrlMap);
