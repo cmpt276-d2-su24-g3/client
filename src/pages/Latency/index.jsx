@@ -40,7 +40,7 @@ export function Latency({ R2RUrl, R2CUrl }) {
 
   useEffect(() => {
     ;(async () => {
-      if (loading || error || regions.length === 0) return;
+      if (loading || error || regions.length === 0 || !location) return;
       if (location.type === LocationType.User) {
         await getClientRegionLatencies(regions, setLatencies);
       } else if (location.type === LocationType.Region && location.code) {
@@ -52,15 +52,15 @@ export function Latency({ R2RUrl, R2CUrl }) {
     })();
   }, [location, regions, loading, error]);
   
-
   return (
     <>
     <NavBar />
     <div className="flex flex-row gap-4 pl-7 pt-5 mt-16 h-dvh">
       <div className="flex flex-col grow">
-      <h1 className="text-3xl text-sky-950 font-semibold pt-5">Active Data Centers - Worldwide</h1>
-      <h2 className="text-lg text-slate-500">
-        View live latency from location to AWS data centers worldwide</h2>
+        <h1 className="text-3xl text-sky-950 font-semibold pt-5">Active Data Centers - Worldwide</h1>
+        <h2 className="text-lg text-slate-500">
+          View live latency from location to AWS data centers worldwide
+        </h2>
         <div className="h-4/5 w-11/12">
           <Map regions={regions} latencies={latencies} location={location} />
         </div>
@@ -74,6 +74,71 @@ export function Latency({ R2RUrl, R2CUrl }) {
     </>
   )
 }
+
+// Fetch Region-to-Region Latency Data
+// Fetch Region-to-Region Latency Data
+async function getRegionRegionLatencies(origin, latencies, setLatencies) {
+  // Set all latencies to Infinity initially
+  let updatedLatencies = latencies.map((l) => ({ ...l, latency: Infinity }));
+  setLatencies(updatedLatencies);
+
+  try {
+    // Get the region-to-region latency data from the API Gateway
+    const data = await getRegionRegionDataCached(origin);
+
+    // Filter the data to only include latencies where the origin matches the selected origin
+    const filteredData = data.filter((item) => item.origin === origin);
+
+    // Create a new latencies array to update the state
+    const newLatencies = updatedLatencies.map((latency, i) => {
+      if (latency.region === origin) return latency;  // Skip the origin region itself
+      const newLatency = filteredData.find((l) => l.destination === latency.region);
+      if (newLatency) {
+        return { ...latency, latency: newLatency.latency };  // Update the latency if found
+      }
+      return latency;
+    });
+
+    // Update the latencies state with the new data
+    setLatencies(newLatencies);
+  } catch (error) {
+    console.error("Error fetching region-to-region latencies:", error);
+  }
+}
+
+
+// Fetch data from API Gateway for Region-to-Region Latencies
+async function getRegionRegionData(origin) {
+  try {
+    // Make a request to your API Gateway, passing the origin as a query parameter
+    const response = await fetch(
+      `${import.meta.env.VITE_AWS_API_URL}?origin=${origin}`
+    );
+
+    // If the response is not OK, throw an error
+    if (!response.ok) {
+      throw new Error('Failed to fetch region-to-region latencies');
+    }
+
+    // Parse the response as JSON
+    const json = await response.json();
+
+    // Return the latency data
+    return json.map((item) => ({
+      origin: item.origin,
+      destination: item.destination,
+      latency: parseFloat(item.latency),
+      timestamp: new Date(item.timestamp).getTime(),
+    }));
+  } catch (error) {
+    console.error('Error fetching region-to-region data:', error);
+    return [];
+  }
+}
+
+// Memoized version of getRegionRegionData to cache the results
+const getRegionRegionDataCached = memoize(getRegionRegionData);
+
 
 //Client-to-Region
 async function getClientRegionLatencies(regions, setLatencies) {
@@ -177,64 +242,3 @@ async function getRegionClientLatencies(host, setLatencies) {
 }
 
 
-
-
-
-// Region-to-Region 
-async function getRegionRegionLatencies(origin, latencies, setLatencies) {
-  // Set all latencies to Infinity initially
-  latencies = latencies.map((l) => ({ ...l, latency: Infinity }));
-  setLatencies(latencies);
-
-  try {
-    // Get the region-to-region latency data from the cache (or from the API Gateway)
-    const data = await getRegionRegionDataCached(origin);
-
-    // Create a new latencies array to update the state
-    const newLatencies = [...latencies];
-    latencies.forEach((latency, i) => {
-      if (latency.region === origin) return;
-      const newLatency = data.find((l) => l.destination === latency.region);
-      if (newLatency) newLatencies[i].latency = newLatency.latency;
-    });
-
-    // Update the latencies state with the new data
-    setLatencies(newLatencies);
-  } catch (error) {
-    console.error("Error fetching region-to-region latencies:", error);
-  }
-}
-
-// Fetch data from API Gateway
-async function getRegionRegionData(origin) {
-  try {
-    // Make a request to your API Gateway, passing the origin as a query parameter
-    const response = await fetch(
-      `${import.meta.env.VITE_AWS_API_URL}?origin=${origin}`
-    );
-
-    // If the response is not OK, throw an error
-    if (!response.ok) {
-      throw new Error('Failed to fetch region-to-region latencies');
-    }
-
-    // Parse the response as JSON
-    const json = await response.json();
-
-    // Return the sorted latency data
-    return json.details
-      .map((item) => ({
-        origin: item.origin,
-        destination: item.destination,
-        latency: parseFloat(item.latency),
-        timestamp: new Date(item.timestamp).getTime(),
-      }))
-      .sort((a, b) => a.timestamp - b.timestamp);
-  } catch (error) {
-    console.error('Error fetching region-to-region data:', error);
-    return [];
-  }
-}
-
-// Memoized version of getRegionRegionData to cache the results
-const getRegionRegionDataCached = memoize(getRegionRegionData);
