@@ -30,7 +30,7 @@ export function NavBar({ page }) {
 
             {/* Button added at the end of the navbar */}
             <div className="mr-8 p-0 bg-white rounded-full font-ember">
-                <button className="bg-white text-sm py-1.5 font-ember px-8 py-0 rounded-full transition-all duration-300 ease-in-out hover:shadow-[0_0_15px_5px_rgba(75,0,130,0.7)]">
+                <button href="https://github.com/cmpt276-d2-su24-g3" className="bg-white text-sm py-1.5 font-ember px-8 py-0 rounded-full transition-all duration-300 ease-in-out hover:shadow-[0_0_15px_5px_rgba(75,0,130,0.7)]">
                     documentation
                 </button>
             </div>
