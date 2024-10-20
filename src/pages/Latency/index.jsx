@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react';
 import { Map } from './Map'
 import { LocationInput, LocationType } from './LocationInput'
 import { RegionsInput } from './RegionsInput'
@@ -6,11 +6,15 @@ import LatencyTable from './LatencyTable'
 import { memoize } from '@/lib/utils'
 import { NavBar } from '@/components/NavBar'
 import regionsJs from '@/lib/regionsJs'
+import { ConfigContext } from '@/src/App'
 
 // TODO: Generate based on user location?
 const DEFAULT_REGION_AREAS = ['Americas']
 
-export function Latency({ R2RUrl, R2CUrl }) {
+export function Latency() {
+  const config = useContext(ConfigContext);
+  const { R2RApiUrl, R2CUrls } = config;
+
   const [regions, setRegions] = useState([])
   const [latencies, setLatencies] = useState([])
   const [loading, setLoading] = useState(false)
@@ -44,13 +48,13 @@ export function Latency({ R2RUrl, R2CUrl }) {
       if (location.type === LocationType.User) {
         await getClientRegionLatencies(regions, setLatencies);
       } else if (location.type === LocationType.Region && location.code) {
-        await getRegionRegionLatencies(location.code, latencies, setLatencies);
+        await getRegionRegionLatencies(location.code, latencies, setLatencies, R2RApiUrl);
       } else if (location.type === LocationType.Website && location.url) {
         console.log('Location URL:', location.url);
-        await getRegionClientLatencies(location.url, setLatencies);
+        await getRegionClientLatencies(location.url, setLatencies, R2CUrls);
       }
     })();
-  }, [location, regions, loading, error]);
+  }, [location, regions, loading, error, R2RApiUrl, R2CUrls]);
   
   return (
     <>
@@ -77,26 +81,33 @@ export function Latency({ R2RUrl, R2CUrl }) {
 
 // Fetch Region-to-Region Latency Data
 // Fetch Region-to-Region Latency Data
-async function getRegionRegionLatencies(origin, latencies, setLatencies) {
+async function getRegionRegionLatencies(origin, latencies, setLatencies, R2RApiUrl) {
   // Set all latencies to Infinity initially
   let updatedLatencies = latencies.map((l) => ({ ...l, latency: Infinity }));
   setLatencies(updatedLatencies);
 
   try {
     // Get the region-to-region latency data from the API Gateway
-    const data = await getRegionRegionDataCached(origin);
+    const data = await getRegionRegionDataCached(R2RApiUrl);
 
-    // Filter the data to only include latencies where the origin matches the selected origin
-    const filteredData = data.filter((item) => item.origin === origin);
-
-    // Create a new latencies array to update the state
-    const newLatencies = updatedLatencies.map((latency, i) => {
-      if (latency.region === origin) return latency;  // Skip the origin region itself
-      const newLatency = filteredData.find((l) => l.destination === latency.region);
-      if (newLatency) {
-        return { ...latency, latency: newLatency.latency };  // Update the latency if found
+    const latestDataMap = {};
+    data.forEach((item) => {
+      if (item.origin === origin) {
+        const existingEntry = latestDataMap[item.destination];
+        // If no entry exists or the current item's timestamp is newer, update the map
+        if (!existingEntry || item.timestamp > existingEntry.timestamp) {
+          latestDataMap[item.destination] = item;
+        }
       }
-      return latency;
+    });
+
+    const newLatencies = updatedLatencies.map((latency) => {
+      if (latency.region === origin) return latency; // Skip origin region itself
+      const latestLatencyEntry = latestDataMap[latency.region];
+      if (latestLatencyEntry) {
+        return { ...latency, latency: latestLatencyEntry.latency };
+      }
+      return latency; // Retain Infinity if no data found
     });
 
     // Update the latencies state with the new data
@@ -108,11 +119,11 @@ async function getRegionRegionLatencies(origin, latencies, setLatencies) {
 
 
 // Fetch data from API Gateway for Region-to-Region Latencies
-async function getRegionRegionData(origin) {
+async function getRegionRegionData(R2RApiUrl) {
   try {
     // Make a request to your API Gateway, passing the origin as a query parameter
     const response = await fetch(
-      `${import.meta.env.VITE_AWS_API_URL}?origin=${origin}`
+      R2RApiUrl
     );
 
     // If the response is not OK, throw an error
@@ -122,6 +133,7 @@ async function getRegionRegionData(origin) {
 
     // Parse the response as JSON
     const json = await response.json();
+    console.log(json)
 
     // Return the latency data
     return json.map((item) => ({
@@ -168,46 +180,12 @@ async function getClientRegionLatency(region) {
 
 
 //Region-to-Client
-// Map of regions to Lambda function URLs
-const regionToUrlMap = {
-  'us-east-1': import.meta.env.VITE_AWS_R2C_URL_US_EAST_1,
-  'us-east-2': import.meta.env.VITE_AWS_R2C_URL_US_EAST_2,
-  'us-west-1': import.meta.env.VITE_AWS_R2C_URL_US_WEST_1,
-  'us-west-2': import.meta.env.VITE_AWS_R2C_URL_US_WEST_2,
-  'af-south-1': import.meta.env.VITE_AWS_R2C_URL_AF_SOUTH_1,
-  'ap-east-1': import.meta.env.VITE_AWS_R2C_URL_AP_EAST_1,
-  'ap-south-2': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTH_2,
-  'ap-southeast-3': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_3,
-  'ap-southeast-4': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_4,
-  'ap-south-1': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTH_1,
-  'ap-northeast-3': import.meta.env.VITE_AWS_R2C_URL_AP_NORTHEAST_3,
-  'ap-northeast-2': import.meta.env.VITE_AWS_R2C_URL_AP_NORTHEAST_2,
-  'ap-southeast-1': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_1,
-  'ap-southeast-2': import.meta.env.VITE_AWS_R2C_URL_AP_SOUTHEAST_2,
-  'ap-northeast-1': import.meta.env.VITE_AWS_R2C_URL_AP_NORTHEAST_1,
-  'ca-central-1': import.meta.env.VITE_AWS_R2C_URL_CA_CENTRAL_1,
-  'ca-west-1': import.meta.env.VITE_AWS_R2C_URL_CA_WEST_1,
-  'eu-central-1': import.meta.env.VITE_AWS_R2C_URL_EU_CENTRAL_1,
-  'eu-west-1': import.meta.env.VITE_AWS_R2C_URL_EU_WEST_1,
-  'eu-west-2': import.meta.env.VITE_AWS_R2C_URL_EU_WEST_2,
-  'eu-south-1': import.meta.env.VITE_AWS_R2C_URL_EU_SOUTH_1,
-  'eu-west-3': import.meta.env.VITE_AWS_R2C_URL_EU_WEST_3,
-  'eu-south-2': import.meta.env.VITE_AWS_R2C_URL_EU_SOUTH_2,
-  'eu-north-1': import.meta.env.VITE_AWS_R2C_URL_EU_NORTH_1,
-  'eu-central-2': import.meta.env.VITE_AWS_R2C_URL_EU_CENTRAL_2,
-  'me-south-1': import.meta.env.VITE_AWS_R2C_URL_ME_SOUTH_1,
-  'me-central-1': import.meta.env.VITE_AWS_R2C_URL_ME_CENTRAL_1,
-  'il-central-1': import.meta.env.VITE_AWS_R2C_URL_IL_CENTRAL_1,
-  'sa-east-2': import.meta.env.VITE_AWS_R2C_URL_SA_EAST_2
-};
-
-
-async function getRegionClientLatencies(host, setLatencies) {
-  const filteredRegions = Object.keys(regionToUrlMap);
+async function getRegionClientLatencies(host, setLatencies, R2C_Urls) {
+  const filteredRegions = Object.keys(R2C_Urls);
 
   for (const region of filteredRegions) {
     try {
-      const response = await fetch(regionToUrlMap[region], {
+      const response = await fetch(R2C_Urls[region], {
         method: 'POST',
         body: JSON.stringify({ region, host }),
         headers: {

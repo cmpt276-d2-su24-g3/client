@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpRight } from 'lucide-react'
+import { ConfigContext } from '@/src/App'
 
 import { NavBar } from '@/components/NavBar'
 import { Separator } from '@/components/ui/separator'
@@ -34,18 +35,17 @@ const InfoBlock = ({ type, latency }) => {
 
 
 export function History({ startFromLatency, destinationFromLatency }) {
+  const config = useContext(ConfigContext);
+  const { R2RApiUrl } = config;
+
   const [regions, setRegions] = useState([])
   const [searched, setSearched] = useState('')
   const [tableIndex, setTableIndex] = useState(1)
   const [pings, setPings] = useState([])
-  const [startingLocation, setStartingLocation] = useState(startFromLatency)
-  const [destination, setDestination] = useState(destinationFromLatency)
   // If a user acceses the page by clicking on the latency history page at the top (So not clicking isoline) then use these destinations
   // Otherwise, use the locations from the isoline
-  if (!startingLocation && !destination) {
-    setStartingLocation('us-west-2')
-    setDestination('ca-central-1')
-  }
+  const [startingLocation, setStartingLocation] = useState(startFromLatency || 'us-west-2')
+  const [destination, setDestination] = useState(destinationFromLatency || 'ca-central-1')
 
   useEffect(() => {
     ;(async () => {
@@ -58,26 +58,27 @@ export function History({ startFromLatency, destinationFromLatency }) {
     ;(async () => {
       try {
         const res = await fetch(
-          'https://ncst1bngw1.execute-api.us-west-2.amazonaws.com/dev/pingdata'
+          R2RApiUrl
         )
         if (!res.ok) throw new Error('Failed to fetch pings')
         const data = await res.json()
+        console.log(data)
 
-        const filteredData = data.Items
+        const filteredData = data
           .filter(item => 
-            item.origin.S === startingLocation &&
-            item.destination.S === destination
+            item.origin === startingLocation &&
+            item.destination === destination
           )
           .map(item => ({
-            time: new Date(item.timestamp.S).toLocaleTimeString(),
-            latency: parseFloat(item.latency.N),
+            time: new Date(item.timestamp).toLocaleTimeString(),
+            latency: parseFloat(item.latency),
           }))
 
         setPings(filteredData)
       } catch (error) {
       }
     })()
-  }, [startingLocation, destination])
+  }, [startingLocation, destination]) //TODO pings is empty
 
   const getLatencyAt = (hour) => {
     const targetHour = hour.toString().padStart(2, '0')
@@ -95,6 +96,7 @@ export function History({ startFromLatency, destinationFromLatency }) {
   
   const getLiveLatency = () => {
     const lastPing = pings[pings.length - 1]
+    console.log(pings)
     return lastPing ? Math.round(lastPing.latency) + ' ms' : 'N/A'
   }
 
