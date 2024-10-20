@@ -22,7 +22,7 @@ export default function App() {
       setConfig({
         chatbotApiUrl: loadedConfig.CHATBOT_API_URL,
         chatbotApiKey: loadedConfig.CHATBOT_API_KEY,
-        R2RApiUrl: loadedConfig.VITE_AWS_API_URL,
+        R2RApiUrl: loadedConfig.R2R_URL,
         R2CUrls: extractR2CUrls(loadedConfig),
       });
     }
