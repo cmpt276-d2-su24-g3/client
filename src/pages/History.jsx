@@ -58,7 +58,7 @@ export function History({ startFromLatency, destinationFromLatency }) {
     ;(async () => {
       try {
         const res = await fetch(
-          R2RApiUrl
+          `${R2RApiUrl}fetch-ping`
         )
         if (!res.ok) throw new Error('Failed to fetch pings')
         const data = await res.json()
