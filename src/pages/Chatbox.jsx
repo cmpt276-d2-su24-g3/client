@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useContext } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { v4 as uuidv4 } from 'uuid';
 import SendIcon from '@/src/assets/send-icon.svg';
@@ -11,6 +11,7 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar";
 import ReactMarkdown from 'react-markdown';
+import { ConfigContext } from '@/src/App'
 
 const ChatConversations = ({ conversations, chatConversationsContainerRef }) => {
     useEffect(() => {
@@ -98,13 +99,17 @@ const ChatMessage = ({ message }) => {
     );
 };
 
-export function Chatbox({ apiUrl, apiKey }) {
+export function Chatbox() {
+    const config = useContext(ConfigContext);
+    const { chatbotApiUrl, chatbotApiKey } = config;
+
     const [input, setInput] = useState('');
     const [uuid, setUuid] = useState('');
     const [conversations, setConversations] = useState([]);
     const [loading, setLoading] = useState(false);
     const chatConversationsContainerRef = useRef(null);
-    console.log(apiUrl)
+    console.log(chatbotApiUrl)
+    console.log(chatbotApiKey)
 
     useEffect(() => {
         const initializeUuid = () => {
@@ -127,11 +132,11 @@ export function Chatbox({ apiUrl, apiKey }) {
     }, [uuid]);
 
     const fetchHistory = async () => {
-        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}get-history`, {
+        const response = await fetch(`${chatbotApiUrl}/get-history`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': apiKey,
+                'X-API-Key': chatbotApiKey,
             },
             body: JSON.stringify({ session_id: uuid }),
         });
@@ -154,12 +159,11 @@ export function Chatbox({ apiUrl, apiKey }) {
             session_id: uuid,
             time: new Date().toISOString()
         };
-        console.log(import.meta.env.VITE_CHATBOT_API_URL)
-        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}chat`, {
+        const response = await fetch(`${chatbotApiUrl}/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': apiKey,
+                'X-API-Key': chatbotApiKey,
             },
             body: JSON.stringify(requestData),
         });
@@ -200,11 +204,11 @@ export function Chatbox({ apiUrl, apiKey }) {
 
     const handleDeleteHistory = async () => {
         setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_CHATBOT_API_URL}delete-history`, {
+        const response = await fetch(`${chatbotApiUrl}/delete-history`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': apiKey,
+                'X-API-Key': chatbotApiKey,
             },
             body: JSON.stringify({ session_id: uuid }),
         });
