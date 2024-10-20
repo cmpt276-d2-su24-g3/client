@@ -123,7 +123,7 @@ async function getRegionRegionData(R2RApiUrl) {
   try {
     // Make a request to your API Gateway, passing the origin as a query parameter
     const response = await fetch(
-      R2RApiUrl
+      `${R2RApiUrl}fetch-ping`
     );
 
     // If the response is not OK, throw an error
@@ -185,7 +185,7 @@ async function getRegionClientLatencies(host, setLatencies, R2C_Urls) {
 
   for (const region of filteredRegions) {
     try {
-      const response = await fetch(R2C_Urls[region], {
+      const response = await fetch(`${R2C_Urls[region]}url-ping`, {
         method: 'POST',
         body: JSON.stringify({ region, host }),
         headers: {
